@@ -1,0 +1,6 @@
+fastapi==0.75.0
+uvicorn==0.17.6
+pymongo[srv]==4.1.1
+python-dotenv==0.20.0
+werkzeug==2.0.2
+pydantic==1.9.0
