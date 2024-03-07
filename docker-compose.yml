@@ -2,9 +2,6 @@ version: '3.4'
 
 services:
   streamlitlogin:
-    image: systemy_rozproszone_fastapi_login
-    build:
-      context: .
-      dockerfile: ./Dockerfile
+    image: fastapi_login
     ports:
       - 5000:5000

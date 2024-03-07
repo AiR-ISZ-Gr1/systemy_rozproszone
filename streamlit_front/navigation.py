@@ -25,7 +25,7 @@ def make_sidebar():
 
             st.page_link("pages/page1.py", label="Secret Company Stuff", icon="🔒")
             st.page_link("pages/page2.py", label="More Secret Stuff", icon="🕵️")
-            st.page_link("pages/page3.py", label="Chatbot", icon="🕵️")
+            st.page_link("pages/chatbot.py", label="Chatbot", icon="🕵️")
 
             st.write("")
             st.write("")
