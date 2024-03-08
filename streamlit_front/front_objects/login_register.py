@@ -1,8 +1,10 @@
 import requests
 import secrets
 import streamlit as st
+from .get_variables import get_variable
+from string import punctuation
 
-API_BASE_URL = "http://localhost:5000"
+API_BASE_URL = get_variable("API_BASE_URL")
 
 def register_user(username, password):
     response = requests.post(f"{API_BASE_URL}/register", json={"username": username, "password": password})
@@ -32,16 +34,22 @@ def login_register_front():
                 st.error(response.get('message', 'Error logging in.'))
 
     elif user_choice == 'Register':
+        st.write("Register a new account, the password have to be logner than 8 characters and has one on more specific charakter")
         new_username = st.text_input("Choose a username", key="register_username")
         new_password = st.text_input("Choose a password", type="password", key="register_password")
         confirm_password = st.text_input("Confirm password", type="password", key="confirm_password")
-
+        
+        
         if st.button("Register"):
-            if new_password != confirm_password:
-                st.error("Passwords do not match. Please try again.")
+            if len(new_password) < 8 or not any(char in new_password for char in list(punctuation)):
+                st.error("Password must be at least 8 characters long and and has one on more specific charakter like '#' or '@' or '$'. Please try again.")
             else:
-                response = register_user(new_username, new_password)
-                if response.get('message') == 'User registered successfully.':
-                    st.success("Registered successfully! Please log in.")
+                if new_password != confirm_password:
+                    st.error("Passwords do not match. Please try again.")
                 else:
-                    st.error(response.get('message', 'Error registering.'))
+                    
+                    response = register_user(new_username, new_password)
+                    if response.get('message') == 'User registered successfully.':
+                        st.success("Registered successfully! Please log in.")
+                    else:
+                        st.error(response.get('message', 'Error registering.'))
