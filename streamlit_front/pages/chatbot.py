@@ -6,7 +6,7 @@ from openai import OpenAI
 import streamlit as st
 import shelve
 
-st.title("ChatBot")
+st.title("ChatBot 💬")
 st.write("Feel free to ask me anything! I'm here to help.")
 
 USER_AVATAR = "👤"

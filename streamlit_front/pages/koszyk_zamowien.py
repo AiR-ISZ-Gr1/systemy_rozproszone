@@ -5,13 +5,9 @@ make_sidebar()
 
 st.write(
     """
-# 🕵️ EVEN MORE SECRET
+# 🛒 KOSZYK ZAMÓWIEŃ
 
-This is a secret page that only logged-in users can see.
-
-Super duper secret.
-
-Shh....
+Tutaj znajdziesz wszystkie produkty, które dodałeś do koszyka.
 
 """
 )

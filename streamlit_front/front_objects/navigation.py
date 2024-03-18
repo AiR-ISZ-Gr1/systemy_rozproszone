@@ -17,16 +17,16 @@ def get_current_page_name():
 
 def make_sidebar():
     with st.sidebar:
-        st.title("Systemy rozproszone")
+        st.title("MOŻE NIE JEST TANIO, ALE DOBRZE TEŻ NIE JEST")
         st.write("")
         st.write("")
 
         if st.session_state.get("logged_in", False):
             st.write("Welcome ", st.session_state.username)
 
-            st.page_link(f"{Links.MAIN_USER_PAGE}", label="Main user page", icon="🔒")
-            st.page_link(f"{Links.PAGE_2}", label="More Secret Stuff", icon="🕵️")
-            st.page_link(f"{Links.CHATBOT_PAGE}", label="Chatbot", icon="🕵️")
+            st.page_link(f"{Links.MAIN_USER_PAGE}", label="Produkty", icon="🛍️")
+            st.page_link(f"{Links.PAGE_2}", label="Koszyk zamówień", icon="🛒")
+            st.page_link(f"{Links.CHATBOT_PAGE}", label="Chatbot", icon="💬")
 
             st.write("")
             st.write("")

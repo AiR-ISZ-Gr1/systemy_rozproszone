@@ -5,7 +5,7 @@ make_sidebar()
 
 st.write(
     """
-# 🔓 Secret Company Stuff
+# 🛍️ Secret Company Stuff
 
 This is a secret page that only logged-in users can see.
 
