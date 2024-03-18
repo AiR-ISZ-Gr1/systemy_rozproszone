@@ -1,4 +1,4 @@
-from streamlit_front.front_objects.navigation import make_sidebar
+from front_objects.navigation import make_sidebar
 import streamlit as st
 
 make_sidebar()

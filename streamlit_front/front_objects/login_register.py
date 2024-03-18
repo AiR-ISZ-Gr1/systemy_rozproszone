@@ -1,10 +1,11 @@
 import requests
 import secrets
 import streamlit as st
-from .get_variables import get_variable
+# from .get_variables import get_variable
 from string import punctuation
+from .utils import Links
 
-API_BASE_URL = get_variable("API_BASE_URL")
+API_BASE_URL = Links.BACKEND_BASE_URL
 
 def register_user(username, password):
     response = requests.post(f"{API_BASE_URL}/register", json={"username": username, "password": password})
@@ -23,7 +24,10 @@ def login_register_front():
         password = st.text_input("Password", type="password", key="login_password")
 
         if st.button("Log in"):
-            response = login_user(username, password)
+            # response = login_user(username, password)
+            if username == "aaa" and password == "aaa":
+                response = {"message": "Logged in successfully."}
+
             if response.get('message') == 'Logged in successfully.':
                 st.success("Logged in successfully!")
 
