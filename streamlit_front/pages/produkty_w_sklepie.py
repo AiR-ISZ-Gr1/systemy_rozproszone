@@ -10,21 +10,24 @@ Tut jest wszystko, ale nic dla ciebie.
 """
 )
 
-produkty = [
-    {"nazwa": "Produkt 1", "zdjecie": "test.jpg", "cena": "$19.99", "opis": "To jest opis Produktu 1"},
-    {"nazwa": "Produkt 2", "zdjecie": "test.jpg", "cena": "$24.99", "opis": "To jest opis Produktu 2"},
-    {"nazwa": "Produkt 3", "zdjecie": "test.jpg", "cena": "$14.99", "opis": "To jest opis Produktu 3"},
-    {"nazwa": "Produkt 4", "zdjecie": "test.jpg", "cena": "$29.99", "opis": "To jest opis Produktu 4"},
-    {"nazwa": "Produkt 5", "zdjecie": "test.jpg", "cena": "$9.99", "opis": "To jest opis Produktu 5"},
-    {"nazwa": "Produkt 6", "zdjecie": "test.jpg", "cena": "$34.99", "opis": "To jest opis Produktu 6"},
-    # Dodaj więcej produktów według potrzeb
-]
+import random
+
+def generuj_produkty(N):
+    produkty = []
+    for i in range(1, N+1):
+        cena = "${:.2f}".format(random.uniform(5, 50))  # Losowa cena w przedziale od $5.00 do $50.00
+        nazwa = f"Produkt {i}"
+        opis = f"To jest opis {nazwa}"
+        produkt = {"nazwa": nazwa, "zdjecie": "test.jpg", "cena": cena, "opis": opis}
+        produkty.append(produkt)
+    return produkty
+
+produkty = generuj_produkty(10)
 
 def filtrowanie_produktow(produkty, fraza):
     return [produkt for produkt in produkty if produkt['nazwa'].lower().startswith(fraza.lower())]
 
 def wyswietl_kafelki_produktow():
-    # Strona główna z kafelkami produktów
     st.title("Sklep internetowy")
 
     # Pole tekstowe do wprowadzania frazy
