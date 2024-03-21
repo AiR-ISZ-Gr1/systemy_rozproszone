@@ -1,6 +1,6 @@
 from front_objects.navigation import make_sidebar
 import streamlit as st
-
+from front_objects.utils import Links
 make_sidebar()
 
 st.write(
@@ -12,6 +12,7 @@ Tut jest wszystko, ale nic dla ciebie.
 
 import random
 
+@st.cache_data
 def generuj_produkty(N):
     produkty = []
     for i in range(1, N+1):
@@ -19,18 +20,17 @@ def generuj_produkty(N):
         nazwa = f"Produkt {i}"
         opis = f"To jest opis {nazwa}"
         produkt = {"nazwa": nazwa, "zdjecie": "test.jpg", "cena": cena, "opis": opis}
+        
         produkty.append(produkt)
     return produkty
 
 produkty = generuj_produkty(10)
 
+@st.cache_data
 def filtrowanie_produktow(produkty, fraza):
     return [produkt for produkt in produkty if produkt['nazwa'].lower().startswith(fraza.lower())]
 
 def wyswietl_kafelki_produktow():
-    st.title("Sklep internetowy")
-
-    # Pole tekstowe do wprowadzania frazy
     fraza = st.text_input("Filtruj produkty po nazwie:")
 
     # Filtrowanie produktów po wprowadzonej frazie
@@ -49,6 +49,7 @@ def wyswietl_kafelki_produktow():
                     produkt = wyniki_filtrowania[indeks_produktu]
                     if st.button(produkt["nazwa"]):
                         st.session_state.selected_product = produkt
+                        st.switch_page(Links.PRODUCT_DETAILSC)
                     st.image(produkt["zdjecie"], width=100, use_column_width=False, clamp=False)
                     st.write(f"**{produkt['nazwa']}**")
                     st.write(f"Cena: {produkt['cena']}")
@@ -56,7 +57,9 @@ def wyswietl_kafelki_produktow():
 
 # Strona szczegółów produktu
 def wyswietl_szczegoly_produktu():
-    st.title(st.session_state.selected_product["nazwa"])
+    
+    st.text(st.session_state.selected_product["nazwa"])
+    
     st.image(st.session_state.selected_product["zdjecie"], use_column_width=True, clamp=True)
     st.write(f"**Nazwa:** {st.session_state.selected_product['nazwa']}")
     st.write(f"**Cena:** {st.session_state.selected_product['cena']}")
@@ -84,10 +87,7 @@ def wyswietl_szczegoly_produktu():
             del st.session_state.selected_product
 
 
-if "selected_product" in st.session_state:
-    wyswietl_szczegoly_produktu()
-else:
-    wyswietl_kafelki_produktow()
+wyswietl_kafelki_produktow()
 
 
 

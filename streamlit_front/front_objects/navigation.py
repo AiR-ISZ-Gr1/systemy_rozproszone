@@ -27,6 +27,7 @@ def make_sidebar():
             st.page_link(f"{Links.MAIN_USER_PAGE}", label="Produkty", icon="🛍️")
             st.page_link(f"{Links.PAGE_2}", label="Koszyk zamówień", icon="🛒")
             st.page_link(f"{Links.CHATBOT_PAGE}", label="Chatbot", icon="💬")
+            st.page_link(f"{Links.ORDER_HISTORY}", label="Historia zamówień", icon="📜")
 
             st.write("")
             st.write("")
