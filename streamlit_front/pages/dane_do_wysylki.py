@@ -59,3 +59,4 @@ if submitted:
         #TODO wyślij numer zamówienia na backend
         wyswietl_zakupy(st.session_state['temp_order'])
         del st.session_state["temp_order"]
+        del st.session_state.lista_zakupow

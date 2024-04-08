@@ -45,7 +45,6 @@ if 'username' in st.session_state and 'lista_zakupow' in st.session_state:
         
         if st.button("Podsumuj zamówienie"):
             st.session_state["temp_order"] = df
-            del st.session_state.lista_zakupow
             st.switch_page(Links.SEND_PAGE)
             # Tutaj możesz dodać kod odpowiedzialny za finalizację zamówienia, np. wysłanie potwierdzenia
             # TODO: dodać funkcję przekazywania argumentów na backend w celu zapisania zamówienia w bazie danych
