@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
+
 class Number(BaseModel):
     value: int
 
