@@ -4,6 +4,8 @@ def send_query(url, params):
     response = requests.get(url, params=params)
     return response.json()
 
+
+
 if __name__ == "__main__":
     user_id = input("Podaj user_id: ")
     product_id = input("Podaj product_id: ")

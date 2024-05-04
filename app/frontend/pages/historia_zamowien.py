@@ -5,6 +5,9 @@ from front_objects.utils import Links
 
 make_sidebar()
 
+#zapytanie o historię zakupów dla danego użytkownika 
+
+#id, all_ordered_products 
 orders_database = {
     1: {"order_id": 1, "product": "Laptop", "price": 1500, "status": "Przyjęte"},
     2: {"order_id": 2, "product": "Smartphone", "price": 800, "status": "W trakcie realizacji"},

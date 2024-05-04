@@ -1,6 +1,9 @@
 from front_objects.navigation import make_sidebar
 import streamlit as st
 from front_objects.utils import Links
+import requests
+
+
 make_sidebar()
 
 st.write(
@@ -13,18 +16,27 @@ Tut jest wszystko, ale nic dla ciebie.
 import random
 
 @st.cache_data
-def generuj_produkty(N):
-    produkty = []
-    for i in range(1, N+1):
-        cena = "${:.2f}".format(random.uniform(5, 50))  # Losowa cena w przedziale od $5.00 do $50.00
-        nazwa = f"Produkt {i}"
-        opis = f"To jest opis {nazwa}"
-        produkt = {"nazwa": nazwa, "zdjecie": "test.jpg", "cena": cena, "opis": opis}
-        
-        produkty.append(produkt)
-    return produkty
+def ask_products(number):
+    url = "http://127.0.0.1:8000/produkty/"
+    params = {'N': number}
+    produkty = requests.get(url, params=params)
+    print(produkty.json())
+    return produkty.json()
 
-produkty = generuj_produkty(10)
+# @st.cache_data
+# def generuj_produkty(N):
+#     produkty = []
+#     for i in range(1, N+1):
+#         cena = "${:.2f}".format(random.uniform(5, 50))  # Losowa cena w przedziale od $5.00 do $50.00
+#         nazwa = f"Produkt {i}"
+#         opis = f"To jest opis {nazwa}"
+#         produkt = {"nazwa": nazwa, "zdjecie": "test.jpg", "cena": cena, "opis": opis}
+        
+#         produkty.append(produkt)
+#     return produkty
+
+produkty = ask_products(10)
+
 
 @st.cache_data
 def filtrowanie_produktow(produkty, fraza):
