@@ -1,4 +1,4 @@
-Systemy Rozproszone
+## Systemy Rozproszone
 
 # To open frontend you should go to:
 :~/systemy_rozproszone/app/frontend
