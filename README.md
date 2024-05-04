@@ -1,8 +1,8 @@
 # Systemy Rozproszone
 
 ## Spis Treści
-1. [Wprowadzenie](#wprowadzenie)
-2. [Frontend](#frontend)
+1. [Wprowadzenie](#Wprowadzenie)
+2. [Frontend](#Frontend)
 # 1. Wprowadzenie
 TO DO
 
