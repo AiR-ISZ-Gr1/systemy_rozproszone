@@ -18,3 +18,5 @@ __pycache__/
 *.pywz
 *.pyzw
 *.ipynb_checkpoints/
+
+scratchpad/
