@@ -12,7 +12,7 @@ TO DO
 ```bash
 cd app/frontend
 docker build --tag rozproszone_front .
-docker run -p 8501:850 rozproszone_front
+docker run -p 8501:8501 rozproszone_front
 ```
 
 ### RUN IN BASH
