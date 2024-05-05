@@ -8,7 +8,7 @@ TO DO
 
 # 2. Frontend
 
-### DOCKER RUN
+### DOCKER BUILD & RUN 
 ```bash
 cd app/frontend
 docker build --tag rozproszone_front .
@@ -21,9 +21,4 @@ cd app/frontend
 pip install -r requirements.txt
 streamlit run streamlit_app.py
 ```
-### To open frontend you should go to:
-`app/frontend`
-
-### and in bash pass
-`streamlit run streamlit_app.py`
 
