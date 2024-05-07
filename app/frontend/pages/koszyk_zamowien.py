@@ -52,4 +52,5 @@ if 'username' in st.session_state and 'lista_zakupow' in st.session_state:
     else:
         st.write("Brak produktów w koszyku.")
 else:
+    
     st.write("Użytkownik nie jest zalogowany lub nie dodał jeszcze żadnych produktów do koszyka.")

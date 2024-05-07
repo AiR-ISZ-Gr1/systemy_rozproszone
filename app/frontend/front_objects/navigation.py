@@ -17,7 +17,7 @@ def get_current_page_name():
 
 def make_sidebar():
     with st.sidebar:
-        st.title("MOŻE NIE JEST TANIO, ALE DOBRZE TEŻ NIE JEST")
+        st.title("PLANT SHOP")
         st.write("")
         st.write("")
 
@@ -44,6 +44,6 @@ def make_sidebar():
 def logout():
     st.session_state.logged_in = False
     st.info("Logged out successfully!")
-    sleep(0.5)
+    sleep(0.2)
     st.switch_page(Links.MAIN_PROGRAM)
     

@@ -23,19 +23,20 @@ def ask_products(number):
     print(produkty.json())
     return produkty.json()
 
-# @st.cache_data
-# def generuj_produkty(N):
-#     produkty = []
-#     for i in range(1, N+1):
-#         cena = "${:.2f}".format(random.uniform(5, 50))  # Losowa cena w przedziale od $5.00 do $50.00
-#         nazwa = f"Produkt {i}"
-#         opis = f"To jest opis {nazwa}"
-#         produkt = {"nazwa": nazwa, "zdjecie": "test.jpg", "cena": cena, "opis": opis}
+@st.cache_data
+def generuj_produkty(N):
+    produkty = []
+    for i in range(1, N+1):
+        cena = "${:.2f}".format(random.uniform(5, 50))  # Losowa cena w przedziale od $5.00 do $50.00
+        nazwa = f"Produkt {i}"
+        opis = f"To jest opis {nazwa}"
+        produkt = {"nazwa": nazwa, "zdjecie": "test.jpg", "cena": cena, "opis": opis}
         
-#         produkty.append(produkt)
-#     return produkty
+        produkty.append(produkt)
+    return produkty
 
-produkty = ask_products(10)
+# produkty = ask_products(10)
+produkty = generuj_produkty(10)
 
 
 @st.cache_data
