@@ -3,10 +3,16 @@ from fastapi import FastAPI
 from dotenv import load_dotenv
 load_dotenv()  # noqa
 
-from .routes import products, users
+from models.address import *
+from models.cart import *
+from models.order import *
+from models.product import *
+from models.user import *
 
-from .clients.sqlite import create_db_and_tables
-create_db_and_tables()
+from routes import products, users
+
+from clients.postgres import init_db
+init_db()
 
 
 app = FastAPI()

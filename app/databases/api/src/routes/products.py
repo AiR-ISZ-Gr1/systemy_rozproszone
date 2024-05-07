@@ -2,8 +2,8 @@ import os
 from typing import List
 from fastapi import APIRouter, HTTPException, Query
 
-from ..clients.mongodb import mongodb
-from ..models.product import Product, ProductUpdate
+from clients.mongodb import mongodb
+from models.product import Product, ProductUpdate
 
 
 ROUTE_NAME = os.path.basename(__file__).replace(".py", "")

@@ -3,20 +3,15 @@ from typing import List
 from fastapi import APIRouter, HTTPException, Query, Depends, Path
 from sqlmodel import Session, select
 
-from ..models.user import User, UserUpdate
-from ..models.address import Address
+from models.user import User, UserUpdate
+from models.address import Address
 
-from ..clients.sqlite import engine
+from clients.postgres import get_session
 
 
 ROUTE_NAME = os.path.basename(__file__).replace(".py", "")
 
 router = APIRouter(prefix=f"/{ROUTE_NAME}", tags=[ROUTE_NAME])
-
-
-def get_session():
-    with Session(engine) as session:
-        yield session
 
 
 @router.post("/", response_model=User)
