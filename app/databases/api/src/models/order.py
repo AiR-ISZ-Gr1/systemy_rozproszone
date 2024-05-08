@@ -1,5 +1,6 @@
 from sqlmodel import SQLModel, Field
 from enum import Enum
+from pydantic import BaseModel
 
 
 class Order(SQLModel, table=True):
@@ -14,3 +15,12 @@ class Order(SQLModel, table=True):
 class OrderStatus(str, Enum):
     PLACED = "placed"
     DONE = "done"
+
+
+class OrderUpdate(BaseModel):
+    cart_id: int | None = None
+    user_id: int | None = None
+    date: str | None = None
+    status: str | None = None
+    total_amount: float | None = None
+

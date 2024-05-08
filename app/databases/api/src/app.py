@@ -9,7 +9,13 @@ from models.order import *
 from models.product import *
 from models.user import *
 
-from routes import products, users
+from routes import (
+    products,
+    orders,
+    users,
+    carts,
+    addresses,
+)
 
 from clients.postgres import init_db
 init_db()
@@ -18,7 +24,10 @@ init_db()
 app = FastAPI()
 
 app.include_router(products.router)
+app.include_router(orders.router)
 app.include_router(users.router)
+app.include_router(carts.router)
+app.include_router(addresses.router)
 
 
 if __name__ == "__main__":
