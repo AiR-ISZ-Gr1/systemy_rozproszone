@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 class User(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    email: str
+    username: str
     password: str
     is_admin: bool
 
@@ -18,6 +18,9 @@ class User(SQLModel, table=True):
 
 
 class UserUpdate(BaseModel):
-    email: str | None = None
+    username: str | None = None
     password: str | None = None
     is_admin: bool | None = None
+
+    address_id: int | None = None
+    cart_id: int | None = None

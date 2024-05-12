@@ -1,9 +1,10 @@
 import os
 from typing import List
-from fastapi import APIRouter, HTTPException, Depends, Path
+from fastapi import APIRouter, HTTPException, Depends, Path, Query
 from sqlmodel import Session, select
 
 from models.cart import Cart, CartUpdate, CartItem, CartItemUpdate
+from models.user import User
 from clients.postgres import get_session
 
 ROUTE_NAME = os.path.basename(__file__).replace(".py", "")
@@ -12,9 +13,18 @@ router = APIRouter(prefix=f"/{ROUTE_NAME}", tags=[ROUTE_NAME])
 
 
 @router.post("/", response_model=Cart)
-def create_cart(cart_data: Cart, session: Session = Depends(get_session)):
+def create_cart(cart_data: Cart, user_id: int | None = Query(None, alias="user"), session: Session = Depends(get_session)):
     session.add(cart_data)
     session.commit()
+    session.refresh(cart_data)
+
+    if user_id:
+        user = session.get(User, user_id)
+        if user is None:
+            raise HTTPException(status_code=404, detail="User not found")
+        user.cart_id = cart_data.id
+        session.commit()
+
     session.refresh(cart_data)
     return cart_data
 
@@ -25,7 +35,7 @@ def read_carts(skip: int = 0, limit: int = 10, session: Session = Depends(get_se
 
 
 @router.get("/{cart_id}", response_model=Cart)
-def read_cart(cart_id: int = Path(..., title="The ID of the cart to retrieve"), session: Session = Depends(get_session)):
+def read_cart(cart_id: int, session: Session = Depends(get_session)):
     cart = session.get(Cart, cart_id)
     if cart is None:
         raise HTTPException(status_code=404, detail="Cart not found")
@@ -136,4 +146,3 @@ def delete_cart_item(cart_id: int, item_id: int, session: Session = Depends(get_
     session.delete(cart_item)
     session.commit()
     return cart_item
-

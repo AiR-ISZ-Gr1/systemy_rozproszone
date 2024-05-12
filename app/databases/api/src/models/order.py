@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 
 class Order(SQLModel, table=True):
-    id: int = Field(default=None, primary_key=True)
+    id: int | None = Field(default=None, primary_key=True)
     cart_id: int = Field(foreign_key="cart.id")
     user_id: int = Field(foreign_key="user.id")
     date: str
@@ -23,4 +23,3 @@ class OrderUpdate(BaseModel):
     date: str | None = None
     status: str | None = None
     total_amount: float | None = None
-
