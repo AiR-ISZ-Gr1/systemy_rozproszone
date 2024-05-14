@@ -2,8 +2,8 @@ import os
 from typing import List
 from fastapi import APIRouter, HTTPException, Query
 
-from ..clients.mongodb import mongodb
-from ..models.product import Product, ProductUpdate
+from clients.mongodb import mongodb
+from models.product import Product, ProductUpdate
 
 
 ROUTE_NAME = os.path.basename(__file__).replace(".py", "")
@@ -14,26 +14,16 @@ collection = mongodb[ROUTE_NAME]
 
 @router.get("/", response_model=List[Product])
 async def get_all_products(
-    category: str | List[str] | None = Query(None),
-    tag: str | List[str] | None = Query(None)
+    category: List[str] | None = Query(None),
+    tag: List[str] | None = Query(None)
 ):
     query = {}
     if category:
-        if isinstance(category, str):
-            query["category"] = category
-        elif isinstance(category, list):
-            query["category"] = {"$in": category}
+        query["category"] = {"$in": category}
+    if tag:
+        query["tags"] = {"$in": tag}
 
-    products = []
-    for product in collection.find(query):
-        if tag and "tags" in product:
-            if isinstance(tag, str):
-                tag = [tag]
-            if set(tag) & set(product["tags"]):
-                products.append(Product(**product))
-        else:
-            products.append(Product(**product))
-    return products
+    return collection.find(query)
 
 
 @router.post("/", response_model=Product)

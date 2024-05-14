@@ -9,7 +9,17 @@ services:
     ports:
       - "8000:8000"
     depends_on:
+      - postgres
       - mongodb
+
+  postgres:
+    image: postgres
+    env_file:
+      - postgres/.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   mongodb:
     image: mongo
@@ -19,4 +29,6 @@ services:
       - mongodb_data:/data/db
 
 volumes:
+  postgres_data:
   mongodb_data:
+

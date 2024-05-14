@@ -3,12 +3,23 @@ from fastapi import FastAPI
 from dotenv import load_dotenv
 load_dotenv()  # noqa
 
-from .routes import products
+from clients.postgres import init_db
+from router import router
 
 
 app = FastAPI()
 
-app.include_router(products.router)
+
+@app.on_event("startup")
+def on_startup():
+    init_db()
+
+
+@app.get("/heartbeat")
+async def heartbeat():
+    return {"status": "OK"}
+
+app.include_router(router)
 
 
 if __name__ == "__main__":

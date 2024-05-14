@@ -22,3 +22,9 @@ pip install -r requirements.txt
 streamlit run streamlit_app.py
 ```
 
+
+
+### RUN DATABASES & CRUD API
+```bash
+docker compose -f app/databases/docker-compose.yml up
+```
