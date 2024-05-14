@@ -11,6 +11,9 @@ services:
     depends_on:
       - postgres
       - mongodb
+    networks:
+      - internal_network
+      - external_db_api
 
   postgres:
     image: postgres
@@ -20,6 +23,8 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - internal_network
 
   mongodb:
     image: mongo
@@ -27,8 +32,15 @@ services:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
+    networks:
+      - internal_network
 
 volumes:
   postgres_data:
   mongodb_data:
 
+networks:
+  internal_network:
+    driver: bridge
+  external_db_api:
+    external: true

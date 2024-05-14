@@ -11,7 +11,8 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the content of the local src directory to the working directory
-COPY fast.py .
-
+COPY login_register.py .
+EXPOSE 8001
+EXPOSE 8000
 # Command to run the application
-CMD ["uvicorn", "fast:app", "--host", "0.0.0.0", "--port", "5000"]
+CMD ["uvicorn", "login_register:app", "--host", "0.0.0.0", "--port", "8001"]

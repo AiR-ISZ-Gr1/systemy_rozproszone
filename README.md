@@ -6,6 +6,11 @@
 # 1. Wprowadzenie
 TO DO
 
+### RUN ALL DOCKERS CONTAINERS
+```bash
+. start_compose.sh
+```
+
 # 2. Frontend
 
 ### DOCKER BUILD & RUN 
@@ -22,9 +27,13 @@ pip install -r requirements.txt
 streamlit run streamlit_app.py
 ```
 
-
+### RUN LOGIN AND REGISTER
+```bash
+docker compose -f app/login_register/docker-compose.yml up
+```
 
 ### RUN DATABASES & CRUD API
 ```bash
 docker compose -f app/databases/docker-compose.yml up
 ```
+

@@ -1,48 +1,44 @@
-from fastapi import FastAPI, HTTPException, status
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse
-from werkzeug.security import generate_password_hash, check_password_hash
-from pymongo.mongo_client import MongoClient
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+import requests
+from passlib.context import CryptContext
+
+app = FastAPI()
+base_url = "http://api:8000/users"
+
+# Kontekst do hashowania haseł
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 class User(BaseModel):
     username: str
     password: str
+    is_admin: bool = False
 
-app = FastAPI()
+class Login(BaseModel):
+    username: str
+    password: str
 
-# MongoDB setup
-client = MongoClient("mongodb+srv://spambartosz123:c0WDL8nciXDSAo1w@cluster0.ffekdag.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-db = client['systemy_rozproszone2']
-collection = db["users"]
-
-@app.post("/register", status_code=status.HTTP_201_CREATED)
-async def register(user: User):
-    user_data = user.dict()
-    username = user_data.get('username')
-    password = user_data.get('password')
-    if username and password:
-        if collection.find_one({'username': username}):
-            return JSONResponse(status_code=status.HTTP_409_CONFLICT, content={'message': 'User already exists.'})
-        
-        hash_pass = generate_password_hash(password)
-        collection.insert_one({'username': username, 'password': hash_pass})
-        return {'message': 'User registered successfully.'}
-    else:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Missing username or password.")
-
-@app.post("/login", status_code=status.HTTP_200_OK)
-async def login(user: User):
-    user_data = user.dict()
-    username = user_data.get('username')
-    password = user_data.get('password')
-    if not username or not password:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Missing username or password.")
+# Endpoint do rejestracji użytkownika
+@app.post("/register/")
+def register_user(user: User):
+    # Hashuj hasło przed zapisaniem
+    response = requests.get(base_url, params={"username": user.username})
+    if response.json():
+        # Jeśli lista nie jest pusta, użytkownik już istnieje
+        raise HTTPException(status_code=400, detail="Username already exists")
     
-    user = collection.find_one({'username': username})
-    
-    if user and check_password_hash(user['password'], password):
-        return {'message': 'Logged in successfully.'}
-    else:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid username or password.")
+    hashed_password = pwd_context.hash(user.password)
+    user.password = hashed_password
+    response = requests.post(base_url, json=user.dict())
+    return response.json()
 
+
+# Endpoint do logowania użytkownika
+@app.post("/login/")
+def login_user(login: Login):
+    response = requests.get(base_url, params={"username": login.username})
+    user_data = response.json()
+    if user_data and pwd_context.verify(login.password, user_data[0]['password']):
+        return {"message": "Login successful"}
+    else:
+        raise HTTPException(status_code=400, detail="Invalid username or password")
