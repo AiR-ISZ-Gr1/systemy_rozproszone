@@ -41,15 +41,17 @@ def login_register_front():
         
         
         if st.button("Register"):
-            if len(new_password) < 8 or not any(char in new_password for char in list(punctuation)):
-                st.error("Password must be at least 8 characters long and and has one on more specific charakter like '#' or '@' or '$'. Please try again.")
+            
+            if new_password != confirm_password:
+                st.error("Passwords do not match. Please try again.")
             else:
-                if new_password != confirm_password:
-                    st.error("Passwords do not match. Please try again.")
-                else:
-                    
+                 if new_username and new_password:
                     response = register_user(new_username, new_password)
+                    
                     if response.get('message') == 'User registered successfully.':
                         st.success("Registered successfully! Please log in.")
+                    elif response.get('detail') == 'Username already exists':
+                        st.error("This username is already in use.")
                     else:
-                        st.error(response.get('message', 'This username is used.'))
+                        st.error("Password must be at least 8 characters long and include a special character like '#', '@', or '$'.")
+

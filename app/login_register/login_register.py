@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import requests
 from passlib.context import CryptContext
+from string import punctuation
 
 app = FastAPI()
 base_url = "http://api:8000/users"
@@ -21,11 +22,12 @@ class Login(BaseModel):
 # Endpoint do rejestracji użytkownika
 @app.post("/register/")
 def register_user(user: User):
-    # Hashuj hasło przed zapisaniem
     response = requests.get(base_url, params={"username": user.username})
     if response.json():
         # Jeśli lista nie jest pusta, użytkownik już istnieje
         raise HTTPException(status_code=400, detail="Username already exists")
+    if len(user.password) < 8 or not any(char in user.password for char in list(punctuation)):
+        raise HTTPException(status_code=400, detail="Wrong password format.")
     
     hashed_password = pwd_context.hash(user.password)
     user.password = hashed_password
