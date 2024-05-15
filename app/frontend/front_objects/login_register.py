@@ -8,11 +8,11 @@ from .utils import Links
 API_BASE_URL = Links.BACKEND_BASE_URL
 
 def register_user(username, password):
-    response = requests.post(f"{API_BASE_URL}/register", json={"username": username, "password": password})
+    response = requests.post(f"{API_BASE_URL}/register/", json={"username": username, "password": password})
     return response.json()
 
 def login_user(username, password):
-    response = requests.post(f"{API_BASE_URL}/login", json={"username": username, "password": password})
+    response = requests.post(f"{API_BASE_URL}/login/", json={"username": username, "password": password})
     return response.json()
 
 
@@ -24,14 +24,10 @@ def login_register_front():
         password = st.text_input("Password", type="password", key="login_password")
 
         if st.button("Log in"):
-            # response = login_user(username, password)
-            if username == "aaa" and password == "aaa":
-                response = {"message": "Logged in successfully."}
-
-            if response.get('message') == 'Logged in successfully.':
+            response = login_user(username, password)
+            if response.get('message') == 'Login successful':
                 st.success("Logged in successfully!")
 
-                session_token = secrets.token_urlsafe()
                 st.session_state.logged_in = True
                 st.session_state.username = username
             else:
@@ -56,4 +52,4 @@ def login_register_front():
                     if response.get('message') == 'User registered successfully.':
                         st.success("Registered successfully! Please log in.")
                     else:
-                        st.error(response.get('message', 'Error registering.'))
+                        st.error(response.get('message', 'This username is used.'))

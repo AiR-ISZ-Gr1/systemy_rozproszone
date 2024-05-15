@@ -30,7 +30,7 @@ def register_user(user: User):
     hashed_password = pwd_context.hash(user.password)
     user.password = hashed_password
     response = requests.post(base_url, json=user.dict())
-    return response.json()
+    return {"message": "User registered successfully."}
 
 
 # Endpoint do logowania użytkownika
