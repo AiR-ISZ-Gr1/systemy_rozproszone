@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: streamlit_frontend
+    ports:
+      - "8501:8501"
+    networks:
+      - databases_external_db_api
+
+networks:
+  databases_external_db_api:
+    external: true
