@@ -65,29 +65,5 @@ class SecretCompanyApp:
                         st.write(f"Cena: {produkt['cena']}")
                         indeks_produktu += 1
 
-# class ProductDetailsApp:
-#     @staticmethod
-#     def run():
-#         st.text(st.session_state.selected_product["nazwa"])
-#         st.image(st.session_state.selected_product["zdjecie"], use_column_width=True, clamp=True)
-#         st.write(f"**Nazwa:** {st.session_state.selected_product['nazwa']}")
-#         st.write(f"**Cena:** {st.session_state.selected_product['cena']}")
-#         st.subheader("Opcje produktu:")
-#         if st.button("Dodaj do koszyka"):
-#             st.success("Produkt dodany do koszyka!")
-#         if st.button("Przeglądaj opinie"):
-#             st.info("Opinie o produkcie")
-#             st.write("1. Bardzo dobry produkt!")
-#             st.write("2. Trochę za drogi jak na tę jakość.")
-#         st.subheader("Dodaj własną opinię:")
-#         opinia = st.text_area("Wpisz swoją opinię")
-#         if st.button("Dodaj opinię"):
-#             if opinia:
-#                 st.success("Twoja opinia została dodana pomyślnie!")
-#             else:
-#                 st.warning("Wpisz treść opinii przed dodaniem.")
-#         if st.button("Powrót do wszystkich produktów"):
-#             del st.session_state.selected_product
-
 app = SecretCompanyApp()
 app.run()

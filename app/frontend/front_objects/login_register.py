@@ -1,18 +1,19 @@
 import requests
 import secrets
 import streamlit as st
-# from .get_variables import get_variable
 from string import punctuation
 from .utils import Links
 
 API_BASE_URL = Links.BACKEND_BASE_URL
 
 def register_user(username, password):
-    response = requests.post(f"{API_BASE_URL}/register/", json={"username": username, "password": password})
+    response = requests.post(f"{API_BASE_URL}/register/", 
+                             json={"username": username, "password": password})
     return response.json()
 
 def login_user(username, password):
-    response = requests.post(f"{API_BASE_URL}/login/", json={"username": username, "password": password})
+    response = requests.post(f"{API_BASE_URL}/login/", 
+                             json={"username": username, "password": password})
     return response.json()
 
 
@@ -35,9 +36,13 @@ def login_register_front():
 
     elif user_choice == 'Register':
         st.write("Register a new account, the password have to be logner than 8 characters and has one on more specific charakter")
-        new_username = st.text_input("Choose a username", key="register_username")
-        new_password = st.text_input("Choose a password", type="password", key="register_password")
-        confirm_password = st.text_input("Confirm password", type="password", key="confirm_password")
+        new_username = st.text_input("Choose a username", 
+                                     key="register_username")
+        new_password = st.text_input("Choose a password", 
+                                     type="password", key="register_password")
+        
+        confirm_password = st.text_input("Confirm password", 
+                                         type="password", key="confirm_password")
         
         
         if st.button("Register"):
