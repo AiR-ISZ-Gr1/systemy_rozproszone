@@ -13,18 +13,18 @@ TO DO
 
 # 2. Frontend
 
-### DOCKER BUILD & RUN 
+
+
+### FRONTEND 
+
+#### DOCKER BUILD
 ```bash
 cd app/frontend
-docker build --tag rozproszone_front .
-docker run -p 8501:8501 -p 8000:8000 rozproszone_front
+docker build --tag streamlit_frontend .
 ```
 
-### RUN IN BASH
 ```bash
-cd app/frontend
-pip install -r requirements.txt
-streamlit run streamlit_app.py
+docker compose -f app/frontend/docker-compose.yml up
 ```
 
 ### RUN LOGIN AND REGISTER
@@ -36,4 +36,8 @@ docker compose -f app/login_register/docker-compose.yml up
 ```bash
 docker compose -f app/databases/docker-compose.yml up
 ```
+
+
+
+
 
