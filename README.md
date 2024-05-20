@@ -22,7 +22,7 @@ TO DO
 cd app/frontend
 docker build --tag streamlit_frontend .
 ```
-
+#### RUN FRONTEND
 ```bash
 docker compose -f app/frontend/docker-compose.yml up
 ```
