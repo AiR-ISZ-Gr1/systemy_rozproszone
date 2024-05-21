@@ -11,13 +11,15 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Skopiuj pliki źródłowe aplikacji do katalogu roboczego
-COPY . .
+# COPY . .
 
 # Ustaw zmienną środowiskową, aby Streamlit nie próbował otworzyć przeglądarki
 ENV STREAMLIT_SERVER_PORT=8501
 
 # Informuj Docker, że kontener będzie nasłuchiwał na określonym porcie podczas działania
 EXPOSE 8501
+
+VOLUME [ "/app" ]
 
 # Uruchom aplikację Streamlit podczas startu kontenera
 CMD ["streamlit", "run", "streamlit_app.py"]

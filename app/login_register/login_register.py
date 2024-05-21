@@ -38,9 +38,22 @@ def register_user(user: User):
 # Endpoint do logowania użytkownika
 @app.post("/login/")
 def login_user(login: Login):
-    response = requests.get(base_url, params={"username": login.username})
-    user_data = response.json()
-    if user_data and pwd_context.verify(login.password, user_data[0]['password']):
-        return {"message": "Login successful"}
-    else:
-        raise HTTPException(status_code=400, detail="Invalid username or password")
+    try:
+        response = requests.get(base_url, params={"username": login.username})
+        user_data = response.json()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str("Invalid access to database"))
+    try:
+        
+        if len(user_data) > 1:
+            raise HTTPException(status_code=500, detail="Multiple users with the same username")
+        elif len(user_data) == 0:
+            raise HTTPException(status_code=400, detail="Invalid username or password")
+        
+        elif user_data and pwd_context.verify(login.password, user_data[0]['password']):
+            return {"message": "Login successful", "is_admin": user_data[0]['is_admin']}
+        else:
+            raise HTTPException(status_code=400, detail="Invalid username or password")
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str("Something went wrong. Please try again."))

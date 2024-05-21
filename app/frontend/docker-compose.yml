@@ -2,9 +2,11 @@ version: '3.8'
 
 services:
   frontend:
-    image: streamlit_frontend
+    image: streamlit_frontend_progress
     ports:
       - "8501:8501"
+    volumes:
+      - /home/bb/systemy_rozproszone/app/frontend:/app
     networks:
       - databases_external_db_api
 

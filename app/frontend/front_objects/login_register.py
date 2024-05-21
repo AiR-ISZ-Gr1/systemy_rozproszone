@@ -31,8 +31,10 @@ def login_register_front():
 
                 st.session_state.logged_in = True
                 st.session_state.username = username
+                st.session_state.is_admin = response.get('is_admin', False)
+                print(st.session_state.is_admin)
             else:
-                st.error(response.get('message', 'Error logging in.'))
+                st.error(f'{response.get("detail")}')
 
     elif user_choice == 'Register':
         st.write("Register a new account, the password have to be logner than 8 characters and has one on more specific charakter")
