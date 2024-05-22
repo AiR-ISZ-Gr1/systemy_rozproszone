@@ -1,6 +1,0 @@
-nazwa: asd
-opis: asdasd
-cena_sprzedazy: 123.0
-ilosc_dostepnych_sztuk: 1
-cena_zakupu: 2.0
-data_wprowadzenia: 2024/05/22
