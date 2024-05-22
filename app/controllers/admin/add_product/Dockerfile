@@ -2,7 +2,7 @@
 FROM python:3.9
 
 # Ustaw katalog roboczy
-WORKDIR /products
+WORKDIR /app
 
 # Skopiuj plik wymagany do instalacji zależności
 COPY requirements.txt .

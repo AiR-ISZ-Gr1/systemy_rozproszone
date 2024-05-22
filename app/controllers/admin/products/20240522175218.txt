@@ -1,6 +1,0 @@
-nazwa: ASDr
-opis: ASD
-cena_sprzedazy: 123.0
-ilosc_dostepnych_sztuk: 123
-cena_zakupu: 123.0
-data_wprowadzenia: 2024-05-22
