@@ -1,0 +1,15 @@
+  version: '3.8'
+
+  services:
+    collect_products:
+      image: collect_products
+      ports:
+        - "8002:8002"
+      volumes:
+      - /home/bb/systemy_rozproszone/app/controllers/admin:/products
+      networks:
+        - databases_external_db_api
+
+  networks:
+    databases_external_db_api:
+      external: true

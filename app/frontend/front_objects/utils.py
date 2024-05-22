@@ -10,3 +10,6 @@ class Links:
     ALL_PRODUCTS='pages/produkty_w_sklepie.py'
     SEND_PAGE = 'pages/dane_do_wysylki.py'
     ORDER_HISTORY = 'pages/historia_zamowien.py'
+    
+    MAIN_ADMIN_PAGE='pages/main_admin_page.py'
+    

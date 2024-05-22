@@ -16,7 +16,8 @@ login_register_front()
 
 if st.session_state.logged_in == True:
     if st.session_state.is_admin:
-        st.write("You are logged in as an admin.")
+        # st.write("You are logged in as admin.")
+        st.switch_page(Links.MAIN_ADMIN_PAGE)
     else:
         sleep(0.2)
         print()
