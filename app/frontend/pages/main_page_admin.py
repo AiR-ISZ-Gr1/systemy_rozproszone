@@ -1,6 +1,8 @@
 import streamlit as st
 import requests
 from datetime import datetime
+from front_objects.navigation_admin import make_sidebar
+make_sidebar()
 
 st.title('Dodaj nowy produkt')
 

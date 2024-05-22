@@ -1,0 +1,13 @@
+  version: '3.8'
+
+  services:
+    update_product:
+      image: update_product
+      ports:
+        - "8003:8003"
+      networks:
+        - databases_external_db_api
+
+  networks:
+    databases_external_db_api:
+      external: true

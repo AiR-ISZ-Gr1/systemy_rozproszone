@@ -11,5 +11,6 @@ class Links:
     SEND_PAGE = 'pages/dane_do_wysylki.py'
     ORDER_HISTORY = 'pages/historia_zamowien.py'
     
-    MAIN_ADMIN_PAGE='pages/main_admin_page.py'
+    MAIN_ADMIN_PAGE='pages/main_page_admin.py'
+    UPDATE_PRODUCTS_ADMIN='pages/update_product_admin.py'
     
