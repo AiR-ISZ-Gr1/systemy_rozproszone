@@ -14,4 +14,5 @@ class Links:
     MAIN_ADMIN_PAGE='pages/main_page_admin.py'
     UPDATE_PRODUCTS_ADMIN='pages/update_product_admin.py'
     CHANGE_ORDER_STATUS_ADMIN='pages/change_order_status_admin.py'
+    MAGAZYN_STAN_ADMIN='pages/magazyn_stan_admin.py'
     

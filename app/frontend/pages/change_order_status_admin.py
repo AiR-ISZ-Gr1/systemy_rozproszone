@@ -1,6 +1,8 @@
 import streamlit as st
 import requests
 import datetime
+from front_objects.navigation_admin import make_sidebar
+make_sidebar()
 
 API_URL = "http://change_order_status:8004"
 
