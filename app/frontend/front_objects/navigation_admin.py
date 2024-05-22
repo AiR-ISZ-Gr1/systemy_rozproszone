@@ -29,7 +29,7 @@ def make_sidebar():
 
             st.page_link(f"{Links.MAIN_ADMIN_PAGE}", label="Add product", icon="🛍️")
             st.page_link(f"{Links.UPDATE_PRODUCTS_ADMIN}", label="Change product", icon="🧰")
-            
+            st.page_link(f"{Links.CHANGE_ORDER_STATUS_ADMIN}", label="Change order status", icon="🗑️")
 
             st.write("")
             st.write("")
