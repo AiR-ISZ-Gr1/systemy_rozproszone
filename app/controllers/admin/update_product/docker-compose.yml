@@ -2,7 +2,9 @@
 
   services:
     update_product:
-      image: update_product
+      build:  # Add the build configuration
+        context: .  # Use the current directory as the build context
+        dockerfile: Dockerfile  # Specify the Dockerfile to use
       ports:
         - "8003:8003"
       networks:

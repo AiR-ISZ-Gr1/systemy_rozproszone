@@ -2,7 +2,9 @@
 
   services:
     send_order:
-      image: send_order
+      build:  # Add the build configuration
+        context: .  # Use the current directory as the build context
+        dockerfile: Dockerfile  # Specify the Dockerfile to use
       ports:
         - "8006:8006"
       volumes:

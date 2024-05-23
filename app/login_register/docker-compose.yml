@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   login_register_users:
-    image: login_register_users
+    build:  # Add the build configuration
+      context: .  # Use the current directory as the build context
+      dockerfile: Dockerfile  # Specify the Dockerfile to use
     ports:
       - "8001:8001"
     networks:

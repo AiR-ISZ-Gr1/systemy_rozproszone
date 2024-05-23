@@ -1,15 +1,17 @@
-  version: '3.8'
+version: '3.8'
 
-  services:
-    collect_products:
-      image: collect_products
-      ports:
-        - "8002:8002"
-      volumes:
-      - ${PWD}:/products
-      networks:
-        - databases_external_db_api
+services:
+  collect_products:
+    build:  # Add the build configuration
+      context: .  # Use the current directory as the build context
+      dockerfile: Dockerfile  # Specify the Dockerfile to use
+    ports:
+      - "8002:8002"
+    volumes:
+      - .:/products
+    networks:
+      - databases_external_db_api
 
-  networks:
-    databases_external_db_api:
-      external: true
+networks:
+  databases_external_db_api:
+    external: true
