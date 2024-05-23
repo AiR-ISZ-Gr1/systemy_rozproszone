@@ -1,18 +1,20 @@
 import streamlit as st
+import requests
 
 from front_objects.navigation import make_sidebar
 from front_objects.utils import Links
 
 make_sidebar()
 
-#zapytanie o historię zakupów dla danego użytkownika 
-
-#id, all_ordered_products 
-orders_database = {
-    1: {"order_id": 1, "product": "Laptop", "price": 1500, "status": "Przyjęte"},
-    2: {"order_id": 2, "product": "Smartphone", "price": 800, "status": "W trakcie realizacji"},
-    3: {"order_id": 3, "product": "Słuchawki", "price": 200, "status": "Dostarczone"},
-}
+def get_order_history(username):
+    try:
+        response = requests.get(f"http://history_orders:8007/orders/{username}")
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.HTTPError as err:
+        st.error(f"HTTP error occurred: {err}")
+    except Exception as err:
+        st.error(f"An error occurred: {err}")
 
 def display_order_details(order):
     st.write("### Szczegóły zamówienia")
@@ -22,6 +24,12 @@ def display_order_details(order):
     st.write(f"**Status:** {order['status']}")
 
 st.title("Historia twoich zamówień")
-for order_id, order in orders_database.items():
-    if st.button(f"Zamówienie #{order_id} ${order['price']}"):
-        display_order_details(order)
+
+username = st.session_state.username
+
+if username:
+    orders = get_order_history(username)
+    if orders:
+        for order in orders:
+            if st.button(f"Zamówienie #{order['order_id']} ${order['price']}"):
+                display_order_details(order)

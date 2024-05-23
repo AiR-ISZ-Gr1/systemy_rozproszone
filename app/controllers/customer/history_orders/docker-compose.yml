@@ -1,0 +1,13 @@
+  version: '3.8'
+
+  services:
+    history_orders:
+      image: history_orders
+      ports:
+        - "8007:8007"
+      networks:
+        - databases_external_db_api
+
+  networks:
+    databases_external_db_api:
+      external: true
