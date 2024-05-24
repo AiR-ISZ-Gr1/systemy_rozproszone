@@ -8,12 +8,12 @@ app = FastAPI()
 orders_database = {
     "12347777": [
         {"order_id": 1, "status": "Dostarczone", "products": [
-            {"name": "Laptop", "price": 1500},
-            {"name": "Mouse", "price": 50}
+            {"name": "Laptop", "price": 1500, "review": True},
+            {"name": "Mouse", "price": 50, "review": False}
         ]},
         {"order_id": 2, "status": "W trakcie realizacji", "products": [
-            {"name": "Smartphone", "price": 800},
-            {"name": "Charger", "price": 20}
+            {"name": "Smartphone", "price": 800, "review": False},
+            {"name": "Charger", "price": 20, "review": False}
         ]}
     ]
 }

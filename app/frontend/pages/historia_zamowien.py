@@ -16,8 +16,8 @@ def get_order_history(username):
         st.error(f"An error occurred: {err}")
 
 def display_order_details(order):
-    st.markdown(f"### Szczegóły zamówienia")
-    st.markdown(f"**ID Zamówienia:** {order['order_id']}")
+    st.markdown(f"### Szczegóły zamówienia o ID #{order['order_id']}")
+    
     st.markdown(f"**Status Zamówienia:** {order['status']}")
     
     st.markdown("#### Produkty:")
@@ -29,12 +29,12 @@ def display_order_details(order):
         </div>
         """, unsafe_allow_html=True)
         
-        if order['status'] == "Dostarczone":
+        if order['status'] == "Dostarczone" and not product['review']:
             with st.expander(f"Dodaj opinię o produkcie {product['name']}"):
                 review_text = st.text_area("Twoja opinia", key=f"review_text_{order['order_id']}_{product['name']}")
                 if st.button("Wyślij opinię", key=f"submit_button_{order['order_id']}_{product['name']}"):
                     send_review(username, order['order_id'], product['name'], review_text)
-
+                    
 def send_review(username, order_id, product, review):
     review_data = {
         "username": username,
