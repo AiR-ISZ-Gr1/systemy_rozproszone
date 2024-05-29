@@ -37,4 +37,3 @@ if st.button('Dodaj produkt'):
             st.error('Wystąpił błąd podczas dodawania produktu.')
     else:
         st.warning('Proszę wypełnić wszystkie pola.')
-
