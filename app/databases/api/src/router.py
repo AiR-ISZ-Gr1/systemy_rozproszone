@@ -6,6 +6,7 @@ from routes import (
     users,
     carts,
     addresses,
+    files,
 )
 
 
@@ -16,4 +17,4 @@ router.include_router(orders.router)
 router.include_router(users.router)
 router.include_router(carts.router)
 router.include_router(addresses.router)
-
+router.include_router(files.router)

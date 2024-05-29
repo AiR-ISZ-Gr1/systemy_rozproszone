@@ -22,3 +22,4 @@ __pycache__/
 scratchpad/
 *.db
 
+.DS_Store

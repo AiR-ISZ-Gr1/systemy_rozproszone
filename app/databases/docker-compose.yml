@@ -43,4 +43,4 @@ networks:
   internal_network:
     driver: bridge
   external_db_api:
-    external: true
+    driver: bridge
