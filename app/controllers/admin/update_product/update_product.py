@@ -43,10 +43,19 @@ async def get_product(product_id: str):
     # return product
 
 @app.put("/product/{product_id}", response_model=Product)
-def update_product(product_id: str, updated_product: Product):
-    product_index = next((index for index, product in enumerate(products_db) if product["id"] == product_id), None)
-    if product_index is None:
-        raise HTTPException(status_code=404, detail="Product not found")
-    products_db[product_index] = updated_product.dict()
-    return updated_product
+async def update_product(product_id: str, updated_product: Product):
+    async with aiohttp.ClientSession() as session:
+        async with session.put(f"{base_url}/products/{product_id}", json=updated_product) as response:
+            return response
+            # if product_index is None:
+            #     raise HTTPException(status_code=404, detail="Product not found")
+            # products_db[product_index] = updated_product.dict()
+            # return updated_product
+            # return await response.json()
+
+            # product_index = next((index for index, product in enumerate(products_db) if product["id"] == product_id), None)
+            # if product_index is None:
+            #     raise HTTPException(status_code=404, detail="Product not found")
+            # products_db[product_index] = updated_product.dict()
+            # return updated_product
 
