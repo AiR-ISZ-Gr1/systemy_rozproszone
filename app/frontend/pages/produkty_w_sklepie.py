@@ -1,8 +1,25 @@
-from front_objects.navigation import make_sidebar
 import streamlit as st
+import aiohttp
+import asyncio
+from pydantic import BaseModel, Field
+from nanoid import generate
+from front_objects.navigation import make_sidebar
 from front_objects.utils import Links
+photo_url = "http://api:8000/files/download/"
 import requests
-import random
+from io import BytesIO
+from PIL import Image
+
+
+class Product(BaseModel):
+    id: str = Field(default_factory=lambda: generate(size=10))
+    name: str
+    description: str = "default description"
+    sale_price: float = 0
+    quantity: int = 0
+    buy_price: float = 0
+    date: str
+    picture_path: str
 
 class SecretCompanyApp:
     def __init__(self):
@@ -16,34 +33,36 @@ class SecretCompanyApp:
         """
         )
 
-        produkty = self.generuj_produkty(10)
+        produkty = asyncio.run(self.ask_products(10))
         self.wyswietl_kafelki_produktow(produkty)
 
     @staticmethod
-    @st.cache_data
-    def ask_products(number):
-        url = "http://127.0.0.1:8000/produkty/"
-        params = {'N': number}
-        produkty = requests.get(url, params=params)
-        print(produkty.json())
-        return produkty.json()
+    async def get_all_products():
+        base_url = "http://api:8000"
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f"{base_url}/products/") as response:
+                products = await response.json()
+                return [Product(**product) for product in products]
 
     @staticmethod
-    @st.cache_data
-    def generuj_produkty(N):
-        produkty = []
-        for i in range(1, N+1):
-            cena = "${:.2f}".format(random.uniform(5, 50))  # Losowa cena w przedziale od $5.00 do $50.00
-            nazwa = f"Produkt {i}"
-            opis = f"To jest opis {nazwa}"
-            produkt = {"nazwa": nazwa, "zdjecie": "test.jpg", "cena": cena, "opis": opis}
-            produkty.append(produkt)
-        return produkty
-
+    # @st.cache_data
+    async def ask_products(number):
+        produkty = await SecretCompanyApp.get_all_products()
+        return produkty[:number]
+    
     @staticmethod
-    @st.cache_data
+    def show_photo(product_photo_id: str):
+        response = requests.get(f"{photo_url}{product_photo_id}", stream=True)
+        if response.status_code == 200:
+            image = Image.open(BytesIO(response.content))
+            return image
+        else:
+            return None
+    
+    @staticmethod
+    # @st.cache_data
     def filtrowanie_produktow(produkty, fraza):
-        return [produkt for produkt in produkty if produkt['nazwa'].lower().startswith(fraza.lower())]
+        return [produkt for produkt in produkty if produkt.name.lower().startswith(fraza.lower())]
 
     @staticmethod
     def wyswietl_kafelki_produktow(produkty):
@@ -57,12 +76,16 @@ class SecretCompanyApp:
                 with col:
                     if indeks_produktu < len(wyniki_filtrowania):
                         produkt = wyniki_filtrowania[indeks_produktu]
-                        if st.button(produkt["nazwa"]):
+                        if st.button(produkt.name, key=produkt.id):
                             st.session_state.selected_product = produkt
+                            print(st.session_state.selected_product)
                             st.switch_page(Links.PRODUCT_DETAILSC)
-                        st.image(produkt["zdjecie"], width=100, use_column_width=False, clamp=False)
-                        st.write(f"**{produkt['nazwa']}**")
-                        st.write(f"Cena: {produkt['cena']}")
+                        image = SecretCompanyApp.show_photo(produkt.picture_path)
+                        if image:
+                            st.image(image, width=100, use_column_width=False, clamp=False)
+                        # st.image(produkt.picture_path, width=100, use_column_width=False, clamp=False)
+                        st.write(f"**{produkt.name}**")
+                        st.write(f"Cena: ${produkt.sale_price:.2f}")
                         indeks_produktu += 1
 
 app = SecretCompanyApp()
