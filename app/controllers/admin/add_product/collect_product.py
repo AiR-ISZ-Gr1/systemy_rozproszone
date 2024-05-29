@@ -9,6 +9,8 @@ import nanoid
 from typing import List
 from pydantic import BaseModel, Field
 import requests
+from PIL import Image
+from io import BytesIO
 
 class Product(BaseModel):
     id: str = Field(default_factory=lambda: nanoid.generate(size=10))
@@ -24,6 +26,13 @@ app = FastAPI()
 base_url = "http://api:8000"
 photos_url = "http://api:8000/files/upload"
 
+def compress_image(image: Image.Image, output_size=(640, 640), quality=70) -> BytesIO:
+    image.thumbnail(output_size)
+    output = BytesIO()
+    image.save(output, format='png', quality=quality)
+    output.seek(0)
+    return output
+
 @app.post("/products/")
 async def create_product(
     nazwa: str = Form(...),
@@ -34,20 +43,24 @@ async def create_product(
     data_wprowadzenia: str = Form(...),
     zdjecie: UploadFile = File(...)
 ): 
-    files = {'file': zdjecie.file}
+    # Read the image file and compress it
+    image = Image.open(zdjecie.file)
+    compressed_image = compress_image(image)
+    
+    # Create a file-like object for the compressed image
+    files = {'file': ('compressed_image.jpg', compressed_image, 'image/jpeg')}
     response1 = requests.post(photos_url, files=files)
-    # print(response1.json()['file_id'])
+    
     product = Product(
-        name = nazwa,
-        description = opis,
-        sale_price = cena_sprzedazy,
-        quantity = ilosc_dostepnych_sztuk,
-        buy_price = cena_zakupu,
-        date = 'up to dane',
-        picture_path = response1.json()['file_id']
+        name=nazwa,
+        description=opis,
+        sale_price=cena_sprzedazy,
+        quantity=ilosc_dostepnych_sztuk,
+        buy_price=cena_zakupu,
+        date=data_wprowadzenia,
+        picture_path=response1.json()['file_id']
     )
     
     response2 = requests.post(f"{base_url}/products/", json=product.dict())
     
-
     return JSONResponse(content={"message": "Produkt został zapisany pomyślnie"}, status_code=200)
