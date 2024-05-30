@@ -56,8 +56,29 @@ if selected_product_id:
             picture_path=image_url
         )
 
-        response = requests.put(f"{api_url}/product/{selected_product_id}", json=updated_product)
+        response = requests.put(f"{api_url}/product/{selected_product_id}", json=updated_product.dict())
         if response.status_code == 200:
             st.success("Product updated successfully")
         else:
             st.error("Failed to update product")
+
+
+        # updated_product = Product(
+        #     name=name,
+        #     description=description,
+        #     sale_price=sale_price,
+        #     quantity=quantity,
+        #     buy_price=buy_price,
+        #     date='date',
+        #     picture_path=image_url
+        # )
+
+        #         updated_product = {
+        #     'name' : name,
+        #     'description' : description,
+        #     'sale_price' : sale_price,
+        #     'quantity' : quantity,
+        #     'buy_price' : buy_price,
+        #     'date' : 'date',
+        #     'picture_path' : image_url
+        # }
