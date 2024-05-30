@@ -3,3 +3,6 @@ requests
 aiohttp
 pydantic
 nanoid
+pillow
+python-io
+fastapi

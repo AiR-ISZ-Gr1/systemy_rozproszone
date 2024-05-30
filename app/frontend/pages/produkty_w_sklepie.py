@@ -9,18 +9,22 @@ photo_url = "http://api:8000/files/download/"
 import requests
 from io import BytesIO
 from PIL import Image
+from typing import List
+import nanoid
+import datetime
 
 
 class Product(BaseModel):
-    id: str = Field(default_factory=lambda: generate(size=10))
+    id: str = Field(default_factory=lambda: nanoid.generate(size=10))
     name: str
     description: str = "default description"
-    sale_price: float = 0
+    sell_price: float = 0
     quantity: int = 0
     buy_price: float = 0
-    date: str
-    picture_path: str
-
+    date: str = Field(default_factory=lambda: datetime.now().strftime("%d-%m-%Y %H:%M:%S"))
+    image_id: str | None = None
+    tags: List[str] = Field(default_factory=list)
+    
 class SecretCompanyApp:
     def __init__(self):
         make_sidebar()
@@ -77,15 +81,14 @@ class SecretCompanyApp:
                     if indeks_produktu < len(wyniki_filtrowania):
                         produkt = wyniki_filtrowania[indeks_produktu]
                         if st.button(produkt.name, key=produkt.id):
-                            st.session_state.selected_product = produkt
-                            print(st.session_state.selected_product)
+                            st.session_state.selected_product_id = produkt.id
                             st.switch_page(Links.PRODUCT_DETAILSC)
-                        image = SecretCompanyApp.show_photo(produkt.picture_path)
+                        image = SecretCompanyApp.show_photo(produkt.image_id)
+                        st.write(produkt.image_id)
                         if image:
-                            st.image(image, width=100, use_column_width=False, clamp=False)
-                        # st.image(produkt.picture_path, width=100, use_column_width=False, clamp=False)
+                            st.image(image, width=100)
                         st.write(f"**{produkt.name}**")
-                        st.write(f"Cena: ${produkt.sale_price:.2f}")
+                        st.write(f"Cena: ${produkt.sell_price:.2f}")
                         indeks_produktu += 1
 
 app = SecretCompanyApp()

@@ -1,7 +1,15 @@
 import streamlit as st
 from front_objects.navigation import make_sidebar
 from front_objects.utils import Links
+import requests
+photo_url = "http://api:8000/files/download/"
+base_url = "http://api:8000"
 
+
+def get_product(product_id: str):
+    response = requests.get(f"{base_url}/products/{product_id}")
+    return response.json()
+    
 if 'lista_zakupow' not in st.session_state:
     st.session_state.lista_zakupow = {}
 
@@ -22,11 +30,13 @@ def dodaj_do_koszyka(ilosc=1):
     st.success("Produkt dodany do koszyka!")
 
 def wyswietl_szczegoly_produktu():
-    st.title(st.session_state.selected_product["nazwa"])
+    product_details = get_product(st.session_state.selected_product_id)
+    st.title(st.session_state.selected_product_id)
     
-    st.image(st.session_state.selected_product["zdjecie"], use_column_width=True, clamp=True)
-    st.write(f"**Nazwa:** {st.session_state.selected_product['nazwa']}")
-    st.write(f"**Cena:** {st.session_state.selected_product['cena']}")
+    st.write(product_details)
+    # st.image(st.session_state.selected_product["zdjecie"], use_column_width=True, clamp=True)
+    # st.write(f"**Nazwa:** {st.session_state.selected_product['nazwa']}")
+    # st.write(f"**Cena:** {st.session_state.selected_product['cena']}")
     # st.write(f"**Opis:** {st.session_state.selected_product['opis']}")
     st.subheader("Opcje produktu:")
     ilosc = st.number_input("Ilość", min_value=1, value=1)
@@ -43,13 +53,7 @@ def wyswietl_szczegoly_produktu():
         st.write("2. Trochę za drogi jak na tę jakość.")
     # Dodaj własną opinię
     st.subheader("Dodaj własną opinię:")
-    opinia = st.text_area("Wpisz swoją opinię")
-    if st.button("Dodaj opinię"):
-        # Tutaj możesz dodać kod obsługujący dodawanie własnej opinii
-        if opinia:
-            st.success("Twoja opinia została dodana pomyślnie!")
-        else:
-            st.warning("Wpisz treść opinii przed dodaniem.")
+    
     if st.button("Powrót do wszystkich produktów"):
             del st.session_state.selected_product
             st.switch_page(Links.ALL_PRODUCTS)
