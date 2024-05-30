@@ -51,7 +51,7 @@ def login_user(login: Login):
             raise HTTPException(status_code=400, detail="Invalid username or password")
         
         elif user_data and pwd_context.verify(login.password, user_data[0]['password']):
-            return {"message": "Login successful", "is_admin": user_data[0]['is_admin']}
+            return {"message": "Login successful", "is_admin": user_data[0]['is_admin'], "user_id": user_data[0]['id']}
         else:
             raise HTTPException(status_code=400, detail="Invalid username or password")
         

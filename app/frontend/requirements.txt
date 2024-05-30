@@ -1,2 +1,8 @@
 streamlit>=1.31.0
 requests
+aiohttp
+pydantic
+nanoid
+pillow
+python-io
+fastapi

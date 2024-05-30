@@ -1,35 +1,47 @@
 import streamlit as st
 import requests
 from datetime import datetime
+from pydantic import BaseModel, Field
+import nanoid
+from typing import List
+from fastapi import UploadFile
+from PIL import Image
+from io import BytesIO
+# from app.databases.api.src.models.product import Product
 from front_objects.navigation_admin import make_sidebar
+from front_objects.product import Product
 make_sidebar()
 
-st.title('Dodaj nowy produkt')
 
-nazwa = st.text_input('Nazwa produktu')
-opis = st.text_area('Opis produktu')
-cena_sprzedazy = st.number_input('Cena sprzedaży produktu', min_value=0.0, format="%.2f")
-ilosc_dostepnych_sztuk = st.number_input('Ilość dostępnych sztuk', min_value=0)
-cena_zakupu = st.number_input('Cena zakupu produktu', min_value=0.0, format="%.2f")
-data_wprowadzenia = st.date_input('Data wprowadzenia produktu', value=datetime.today())
-zdjecie = st.file_uploader('Zdjęcie produktu', type=['jpg', 'jpeg', 'png'])
+st.title('Add new Product')
+
+name = st.text_input('Name')
+description = st.text_area('Description')
+sell_price = st.number_input('Sell price', min_value=0.0, format="%.2f")
+quantity = st.number_input('Avaliable quantity', min_value=0)
+buy_price = st.number_input('Buy price', min_value=0.0, format="%.2f")
+tags = st.multiselect(
+    "Categories",
+    ["Flower", "Tree", "Object", "Other", "Manure"],
+    ["Flower"])
+image = st.file_uploader('Photo of the product', type=['jpg', 'jpeg', 'png'])
+
 
 if st.button('Dodaj produkt'):
-    if nazwa and opis and cena_sprzedazy and ilosc_dostepnych_sztuk and cena_zakupu and data_wprowadzenia and zdjecie:
-        # Przygotowanie danych do wysłania
-        files = {'zdjecie': zdjecie.getvalue()}
-        data = {
-            'nazwa': nazwa,
-            'opis': opis,
-            'cena_sprzedazy': cena_sprzedazy,
-            'ilosc_dostepnych_sztuk': ilosc_dostepnych_sztuk,
-            'cena_zakupu': cena_zakupu,
-            'data_wprowadzenia': data_wprowadzenia.strftime('%Y-%m-%d')
-        }
+    if name and description and sell_price and quantity and buy_price and tags:
+        product = Product(
+            name = name,
+            description = description,
+            sell_price = sell_price,
+            quantity = quantity,
+            buy_price = buy_price,
+            tags = tags
+        )
+        product.add_product_image(image)
 
         # Wysłanie danych do FastAPI
-        api_callback='http://collect_products:8002'
-        response = requests.post(f'{api_callback}/products/', data=data, files=files)
+        api_callback='http://api:8000'
+        response = requests.post(f'{api_callback}/products/', json=product.dict())
 
         if response.status_code == 200:
             st.success('Produkt został dodany pomyślnie!')
@@ -37,4 +49,3 @@ if st.button('Dodaj produkt'):
             st.error('Wystąpił błąd podczas dodawania produktu.')
     else:
         st.warning('Proszę wypełnić wszystkie pola.')
-
