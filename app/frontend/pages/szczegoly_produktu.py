@@ -33,11 +33,21 @@ def wyswietl_szczegoly_produktu():
         st.warning("Produkt niedostępny")
         
     if st.button("Dodaj do koszyka"):
+        user_id = st.session_state.user_id
+        check_cart = requests.get(f"{base_url}/users/{user_id}/cart")
+
         
-        # read_user_cart = 
+        if check_cart.status_code == 404:
+            create_cart = requests.post(f"{base_url}/users/{user_id}/cart", json={})
+            add_product = requests.post(f"{base_url}/users/{user_id}/cart/items", json={"product_id": choosen_product.id, "quantity": ilosc})
+            
+        else:
+            add_product = requests.post(f"{base_url}/users/{user_id}/cart/items", json={"product_id": choosen_product.id, "quantity": ilosc})
+            st.write(add_product)
+        
         # czy uzytkownik posiada koszyk
         # jesli nie to stworz koszyk i dodaj produkt
-        st.error("Funkcjonalność dodawania produktu do koszyka nie jest jeszcze zaimplementowana")
+        # st.error("Funkcjonalność dodawania produktu do koszyka nie jest jeszcze zaimplementowana")
         
     if st.button("Przeglądaj opinie"):
         st.info("Opinie o produkcie")

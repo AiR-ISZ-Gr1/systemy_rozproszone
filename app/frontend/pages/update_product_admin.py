@@ -17,15 +17,8 @@ def show_photo(product_photo_id: str):
         return image
     else:
         return None
-    
-def compress_image(image: Image.Image, output_size=(640, 640), quality=20) -> BytesIO:
-    image.thumbnail(output_size)
-    output = BytesIO()
-    image.save(output, format='png', quality=quality)
-    output.seek(0)
-    return output
 
-# api_url = "http://update_product:8003"
+
 api_url = "http://api:8000"
 photo_url = "http://api:8000/files/upload"
 
@@ -37,26 +30,20 @@ products = response.json()
 
 # Select a product to edit
 product_ids = [product["id"] for product in products]
-selected_product_id = st.selectbox("Select a product to edit", product_ids)
+selected_product_id = st.selectbox("Choosen product", product_ids, index=None, placeholder="Select a product to edit")
 
 if selected_product_id:
     response = requests.get(f"{api_url}/products/{selected_product_id}")
-    # st.write("resp:", response.json())
     selected_product = response.json()
-    
-    
+
     st.write("### Edit Product")
     
-    # st.write("API Response:", selected_product)
     name = st.text_input("Name", selected_product["name"])
     description = st.text_area("Description", selected_product["description"])
     sell_price = st.number_input("Sell price", value=selected_product["sell_price"])
     quantity = st.number_input("Quantity", value=selected_product["quantity"])
     buy_price = st.number_input("Buy price", value=selected_product["buy_price"])
-    tags = st.multiselect(
-    "Categories",
-    ["Flower", "Tree", "Object", "Other", "Manure"],
-    ["Flower"])
+    tags = st.multiselect("Categories", ["Flower", "Tree", "Object", "Other", "Manure"], selected_product["tags"])
     image_show = show_photo(selected_product["image_id"])
     if image_show:
         st.image(image_show)
@@ -76,10 +63,6 @@ if selected_product_id:
             image_id = selected_product["image_id"]
         else:
             updated_product.add_product_image(image)
-            # # Create a file-like object for the compressed image
-            # files = {'file': image.getvalue()}
-            # response1 = requests.post(photo_url, files=files)
-            # image_id = response1.json()['file_id']
             
         response = requests.put(f"{api_url}/products/{selected_product_id}", json=updated_product.dict())
         
