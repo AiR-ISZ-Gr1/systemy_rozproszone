@@ -6,14 +6,29 @@ services:
       context: api
     env_file:
       - api/.env
+    volumes:
+      - ./init:/init
     ports:
       - "8000:8000"
     depends_on:
       - postgres
       - mongodb
+      - qdrant
     networks:
       - internal_network
       - external_db_api
+
+  startup:
+    build:
+      context: init
+    depends_on:
+      - postgres
+      - mongodb
+      - qdrant
+      - api
+    networks:
+      - internal_network
+
 
   postgres:
     image: postgres
@@ -38,8 +53,9 @@ services:
     image: qdrant/qdrant
     container_name: qdrant
     volumes:
-      - .qdrant/qdrant_data:/qdrant/storage
-      - .qdrant/qdrant_snapshots/:/snapshots
+      - ./qdrant/qdrant_data:/qdrant/storage
+      - ./qdrant/qdrant_snapshots/:/snapshots
+      - ./qdrant/init/:/qdrant/init
     environment:
       QDRANT__STORAGE__SNAPSHOT_PATH: /snapshots
       QDRANT__TELEMETRY_DISABLED: 'true'
