@@ -18,9 +18,21 @@ Tutaj znajdziesz wszystkie produkty, które dodałeś do koszyka.
 )
 
 get_items_in_cart = requests.get(f"{base_url}/users/{st.session_state.user_id}/cart/items").json()
-get_item_name = requests.get(f"{base_url}/products/{st.session_state.selected_product_id}").json()
-st.write(get_items_in_cart)
-st.write(get_item_name)
+
+for i in get_items_in_cart:
+    get_item_name = str(i["product_id"])
+    choosen_quantity = i["quantity"]
+    
+    get_item_details = requests.get(f"{base_url}/products/{get_item_name}").json()
+    get_item_name = get_item_details["name"]
+    get_item_price = get_item_details["sell_price"]
+    get_accual_quantity = get_item_details["quantity"]
+    
+    st.subheader(f"**:** {get_item_name}")
+    st.write(f"**Cena za sztukę:** {get_item_price} $")
+    st.write(f"**Wybrana ilość:** {choosen_quantity}")
+    st.write(f"**Dostępna ilość:** {get_accual_quantity}")
+
 # # Sprawdź czy użytkownik jest zalogowany i czy istnieje lista zakupów w sesji
 # if 'username' in st.session_state and 'lista_zakupow' in st.session_state:
 #     nazwa_uzytkownika = st.session_state.username

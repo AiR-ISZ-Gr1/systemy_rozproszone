@@ -1,16 +1,17 @@
 import streamlit as st
 import requests
 from front_objects.navigation_admin import make_sidebar
+from front_objects.product import Product
 
 make_sidebar()
-API_URL = "http://magazyn_stan:8005"
+api_url = "http://api:8000"
 
 def get_low_stock_products():
-    response = requests.get(f"{API_URL}/products/low_stock/")
+    response = requests.get(f"{api_url}/products/low_stock/")
     return response.json()
 
 def order_product(product_id, additional_stock):
-    response = requests.put(f"{API_URL}/products/{product_id}", json={"additional_stock": additional_stock})
+    response = requests.put(f"{api_url}/products/{product_id}", json={"additional_stock": additional_stock})
     return response.json()
 
 st.title("Product Management")
