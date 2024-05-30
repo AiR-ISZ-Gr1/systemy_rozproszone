@@ -83,12 +83,21 @@ def delete_cart(cart_id: int, session: Session = Depends(get_session)):
 
 
 @router.post("/{cart_id}/items", response_model=CartItem)
-def create_cart_item(cart_id: int, item_data: CartItem, session: Session = Depends(get_session)):
-    item_data.cart_id = cart_id
-    session.add(item_data)
-    session.commit()
-    session.refresh(item_data)
-    return item_data
+def create_or_update_cart_item(cart_id: int, item_data: CartItem, session: Session = Depends(get_session)):
+    existing_item = session.query(CartItem).filter_by(
+        cart_id=cart_id, product_id=item_data.product_id).first()
+
+    if existing_item:
+        existing_item.quantity += item_data.quantity
+        session.commit()
+        session.refresh(existing_item)
+        return existing_item
+    else:
+        item_data.cart_id = cart_id
+        session.add(item_data)
+        session.commit()
+        session.refresh(item_data)
+        return item_data
 
 
 @router.get("/{cart_id}/items", response_model=List[CartItem])
