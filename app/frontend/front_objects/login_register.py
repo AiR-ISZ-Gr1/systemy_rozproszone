@@ -32,7 +32,7 @@ def login_register_front():
                 st.session_state.logged_in = True
                 st.session_state.username = username
                 st.session_state.is_admin = response.get('is_admin', False)
-                print(st.session_state.is_admin)
+                st.session_state.user_id = response.get('user_id')
             else:
                 st.error(f'{response.get("detail")}')
 

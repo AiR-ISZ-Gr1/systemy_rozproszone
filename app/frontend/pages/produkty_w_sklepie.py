@@ -37,7 +37,7 @@ class SecretCompanyApp:
         """
         )
 
-        produkty = asyncio.run(self.ask_products(10))
+        produkty = asyncio.run(self.ask_products())
         self.wyswietl_kafelki_produktow(produkty)
 
     @staticmethod
@@ -50,9 +50,9 @@ class SecretCompanyApp:
 
     @staticmethod
     # @st.cache_data
-    async def ask_products(number):
+    async def ask_products():
         produkty = await SecretCompanyApp.get_all_products()
-        return produkty[:number]
+        return produkty
     
     @staticmethod
     def show_photo(product_photo_id: str):
@@ -84,10 +84,10 @@ class SecretCompanyApp:
                             st.session_state.selected_product_id = produkt.id
                             st.switch_page(Links.PRODUCT_DETAILSC)
                         image = SecretCompanyApp.show_photo(produkt.image_id)
-                        st.write(produkt.image_id)
+                        # st.write(produkt.image_id)
                         if image:
                             st.image(image, width=100)
-                        st.write(f"**{produkt.name}**")
+                        # st.write(f"**{produkt.name}**")
                         st.write(f"Cena: ${produkt.sell_price:.2f}")
                         indeks_produktu += 1
 

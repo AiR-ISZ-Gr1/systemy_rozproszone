@@ -13,11 +13,11 @@ class Product(BaseModel):
     id: str = Field(default_factory=lambda: generate(size=10))
     name: str
     description: str = "default description"
-    sale_price: float = 0
+    sell_price: float = 0
     quantity: int = 0
     buy_price: float = 0
     date: str
-    picture_path: str
+    image_id: str
 
 
 @app.get("/products", response_model=List[Product])
