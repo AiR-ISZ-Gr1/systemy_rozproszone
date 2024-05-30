@@ -6,9 +6,6 @@ from front_objects.navigation import make_sidebar
 
 make_sidebar()
 
-# Sample username for demonstration
-st.session_state.username = "sample_user"
-
 st.write(
     """
 ## 🛒 DANE DO WYSYŁKI
@@ -22,12 +19,6 @@ def sprawdz_email(email):
     wzor = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     return re.match(wzor, email)
 
-def wyswietl_zakupy(df):
-    st.write("Twoje zakupy:")
-    st.write(df)
-    df['Łączna cena'] = df['Łączna cena'].str.replace('$', '').astype(float)
-    suma = df['Łączna cena'].sum()
-    st.write(f"**Łączna kwota zamówienia:** {suma} $")
 
 # User data form
 with st.form("formularz_danych"):
@@ -71,8 +62,5 @@ if submitted:
             st.write(f"Kod pocztowy: {kod_pocztowy}")
             st.write(f"Email: {email}")
             st.write(f"Wybrana metoda płatności: {metoda_platnosci}")
-            wyswietl_zakupy(st.session_state['temp_order'])
-            del st.session_state["temp_order"]
-            del st.session_state.lista_zakupow
         else:
             st.error("Wystąpił błąd podczas składania zamówienia. Proszę spróbować ponownie.")

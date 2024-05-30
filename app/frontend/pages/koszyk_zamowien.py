@@ -9,8 +9,9 @@ base_url = "http://api:8000"
 
 def change_quantity(item_id, quantity, product_id):
     requests.delete(f"{base_url}/users/{st.session_state.user_id}/cart/items/{item_id}")
-    requests.post(f"{base_url}/users/{st.session_state.user_id}/cart/items", 
-                  json={"product_id": product_id, "quantity": quantity})
+    if quantity > 0:
+        requests.post(f"{base_url}/users/{st.session_state.user_id}/cart/items", 
+                    json={"product_id": product_id, "quantity": quantity})
     st.experimental_rerun()
 
 st.write("# 🛒 KOSZYK ZAMÓWIEŃ")
@@ -51,7 +52,7 @@ for i in get_items_in_cart:
     with col2:
         st.write(f"{item_price} $/szt.")
     with col3:
-        new_quantity = st.number_input("", min_value=1, max_value=actual_quantity, value=chosen_quantity, step=1, key=f"quantity_{item_id}")
+        new_quantity = st.number_input("", min_value=0, max_value=actual_quantity, value=chosen_quantity, step=1, key=f"quantity_{item_id}")
     with col4:
         st.write(f"{item_total_cost:.2f} $")
     with col5:
