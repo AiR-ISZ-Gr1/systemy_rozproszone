@@ -8,7 +8,7 @@ services:
     ports:
       - "8501:8501"
     volumes:
-      - /home/bb/systemy_rozproszone/app/frontend:/app
+      - ./:/app
     networks:
       - databases_external_db_api
 
