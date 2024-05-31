@@ -46,8 +46,7 @@ if submitted:
             "city": miasto,
             "postal_code": kod_pocztowy,
             "email": email,
-            "payment_method": metoda_platnosci,
-            "order_summary": st.session_state['temp_order'].to_dict(orient='records')
+            "payment_method": metoda_platnosci
         }
 
         response = requests.post("http://send_order:8006/submit_order/", json=order_data)
