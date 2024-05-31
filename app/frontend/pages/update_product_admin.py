@@ -32,6 +32,8 @@ joined_list = {product["name"]: product["id"] for product in products}
 
 
 selected_product_name = st.selectbox("Choosen product", joined_list, index=None, placeholder="Select a product to edit")
+
+
 if selected_product_name is not None:
     selected_product_id = joined_list[selected_product_name]
     if selected_product_id:

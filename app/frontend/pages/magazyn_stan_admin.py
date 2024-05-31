@@ -8,7 +8,7 @@ api_url = "http://magazyn_stan:8005"
 
 def get_low_stock_products():
     products = requests.get(f"{api_url}/products/low_stock/")
-    return products.json() # [Product(**product) for product in products]
+    return products # [Product(**product) for product in products]
 
 
 def order_product(product_id, additional_stock):
@@ -19,7 +19,7 @@ st.title("Product Management")
 
 
 low_stock_products = get_low_stock_products()
-st.write(low_stock_products)
+st.write(f'ans:{low_stock_products}')
 
 if low_stock_products:
     st.header("Products with Low Stock")
