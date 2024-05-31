@@ -1,69 +1,42 @@
 from front_objects.navigation import make_sidebar
 import streamlit as st
-
+import requests
 make_sidebar()
-from openai import OpenAI
 import streamlit as st
-import shelve
+import json
+import logging
+import time
 
 st.title("ChatBot 💬")
 st.write("Feel free to ask me anything! I'm here to help.")
 
 USER_AVATAR = "👤"
 BOT_AVATAR = "🤖"
-client = OpenAI()
 
-# Ensure openai_model is initialized in session state
-if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "gpt-3.5-turbo"
+def get_stream(question):
+    s = requests.Session()
+    with s.get(f'http://chatbot:8009/ask/{question}',json=question, timeout=5, stream=True) as resp:
+        for chunk in resp:
+            yield chunk.decode()
 
-
-# Load chat history from shelve file
-def load_chat_history():
-    with shelve.open("chat_history") as db:
-        return db.get("messages", [])
-
-
-# Save chat history to shelve file
-def save_chat_history(messages):
-    with shelve.open("chat_history") as db:
-        db["messages"] = messages
-
-
-# Initialize or load chat history
 if "messages" not in st.session_state:
-    st.session_state.messages = load_chat_history()
+    st.session_state.messages = []
 
-# Sidebar with a button to delete chat history
-with st.sidebar:
-    if st.button("Delete Chat History"):
-        st.session_state.messages = []
-        save_chat_history([])
-
-# Display chat messages
+# Display chat messages from history on app rerun
 for message in st.session_state.messages:
-    avatar = USER_AVATAR if message["role"] == "user" else BOT_AVATAR
-    with st.chat_message(message["role"], avatar=avatar):
+    with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# Main chat interface
-if prompt := st.chat_input("How can I help?"):
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user", avatar=USER_AVATAR):
-        st.markdown(prompt)
+# Accept user input
+if question := st.chat_input(""):
 
-    with st.chat_message("assistant", avatar=BOT_AVATAR):
-        message_placeholder = st.empty()
-        full_response = ""
-        for response in client.chat.completions.create(
-            model=st.session_state["openai_model"],
-            messages=st.session_state["messages"],
-            stream=True,
-        ):
-            full_response += response.choices[0].delta.content or ""
-            message_placeholder.markdown(full_response + "|")
-        message_placeholder.markdown(full_response)
-    st.session_state.messages.append({"role": "assistant", "content": full_response})
+    with st.chat_message("User"):
+        st.markdown(question)
+    st.session_state.messages.append({"role": "user", "content": question})
 
-# Save chat history after each interaction
-save_chat_history(st.session_state.messages)
+    with st.chat_message("Assistant"):
+        response =st.write_stream(get_stream(question))
+        st.session_state.messages.append({"role": "Assistant", "content": response})
+
+
+    

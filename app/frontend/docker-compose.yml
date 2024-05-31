@@ -8,7 +8,8 @@ services:
     ports:
       - "8501:8501"
     volumes:
-      - .:/app
+      - ./:/app
+
     networks:
       - databases_external_db_api
 

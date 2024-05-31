@@ -1,15 +1,17 @@
 import os
-from typing import List
+from typing import List, Any
 from fastapi import APIRouter, HTTPException, Query
 
 from clients.mongodb import mongodb
 from models.product import Product, ProductUpdate
+from qdrant_client import AsyncQdrantClient
 
 
 ROUTE_NAME = os.path.basename(__file__).replace(".py", "")
 
 router = APIRouter(prefix=f"/{ROUTE_NAME}", tags=[ROUTE_NAME])
 collection = mongodb[ROUTE_NAME]
+qdrant_client = AsyncQdrantClient('http://qdrant:6333')
 
 
 @router.get("/", response_model=List[Product])
@@ -82,3 +84,13 @@ async def delete_product(product_id: str):
         return {"message": "Product deleted successfully"}
     else:
         raise HTTPException(status_code=404, detail="Product not found")
+
+@router.post("/vec_search",response_model=List[Any])
+async def vector_search(vector: List[Any]):
+    response = await qdrant_client.search(collection_name="products_description",
+                                          query_vector=vector,
+                                          limit=3)
+    if response:
+        return response
+    else:
+        raise HTTPException(status_code=404, detail="Vector DB error")

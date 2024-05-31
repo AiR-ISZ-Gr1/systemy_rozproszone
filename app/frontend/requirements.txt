@@ -3,6 +3,8 @@ requests
 aiohttp
 pydantic
 nanoid
+openai
 pillow
 python-io
 fastapi
+
