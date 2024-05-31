@@ -3,11 +3,9 @@ import pandas as pd
 import re
 import requests
 from front_objects.navigation import make_sidebar
+from pydantic import BaseModel
 
 make_sidebar()
-
-# Sample username for demonstration
-st.session_state.username = "sample_user"
 
 st.write(
     """
@@ -18,16 +16,17 @@ Proszę o uzupełnienie poniższych danych, abyśmy mogli dostarczyć zamówieni
 )
 
 # Function to validate email
+
+
+class CartItem(BaseModel):
+    product_id: str
+    quantity: int
+
+
 def sprawdz_email(email):
     wzor = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     return re.match(wzor, email)
 
-def wyswietl_zakupy(df):
-    st.write("Twoje zakupy:")
-    st.write(df)
-    df['Łączna cena'] = df['Łączna cena'].str.replace('$', '').astype(float)
-    suma = df['Łączna cena'].sum()
-    st.write(f"**Łączna kwota zamówienia:** {suma} $")
 
 # User data form
 with st.form("formularz_danych"):
@@ -38,17 +37,17 @@ with st.form("formularz_danych"):
     miasto = st.text_input("Miasto:")
     kod_pocztowy = st.text_input("Kod pocztowy:")
     email = st.text_input("Email:")
-    
-    metoda_platnosci = st.selectbox("Wybierz metodę płatności:", ["Karta kredytowa", "Przelew bankowy", "PayPal"])
-    
+
+    metoda_platnosci = st.selectbox("Wybierz metodę płatności:", [
+                                    "Karta kredytowa", "Przelew bankowy", "PayPal"])
+
     submitted = st.form_submit_button("Wyślij zamówienie")
-    
+
 if submitted:
     if not all([imie, nazwisko, adres, miasto, kod_pocztowy, email]) or not sprawdz_email(email):
         st.warning("Proszę wypełnić wszystkie pola w formularzu poprawnie")
     else:
         order_data = {
-            "username": st.session_state.username,
             "first_name": imie,
             "last_name": nazwisko,
             "address": adres,
@@ -56,11 +55,15 @@ if submitted:
             "postal_code": kod_pocztowy,
             "email": email,
             "payment_method": metoda_platnosci,
-            "order_summary": st.session_state['temp_order'].to_dict(orient='records')
+            "user_id": st.session_state.user_id,
+            "order_summary": [
+
+            ]
         }
 
-        response = requests.post("http://send_order:8006/submit_order/", json=order_data)
-        
+        response = requests.post(
+            "http://send_order:8006/submit_order/", json=order_data)
+
         if response.status_code == 200:
             st.success("Dziękujemy za złożenie zamówienia!")
             st.subheader("Podsumowanie zamówienia:")
@@ -71,8 +74,6 @@ if submitted:
             st.write(f"Kod pocztowy: {kod_pocztowy}")
             st.write(f"Email: {email}")
             st.write(f"Wybrana metoda płatności: {metoda_platnosci}")
-            wyswietl_zakupy(st.session_state['temp_order'])
-            del st.session_state["temp_order"]
-            del st.session_state.lista_zakupow
         else:
-            st.error("Wystąpił błąd podczas składania zamówienia. Proszę spróbować ponownie.")
+            st.error(
+                "Wystąpił błąd podczas składania zamówienia. Proszę spróbować ponownie.")

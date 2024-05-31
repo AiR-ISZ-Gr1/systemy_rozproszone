@@ -1,6 +1,6 @@
 import os
 from typing import List
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Query
 from sqlmodel import Session, select
 from models.order import Order, OrderUpdate
 from clients.postgres import get_session
@@ -19,11 +19,14 @@ def create_order(order: Order, session: Session = Depends(get_session)):
 
 
 @router.get("/", response_model=List[Order])
-def read_orders(skip: int = 0, limit: int = 10, session: Session = Depends(get_session)):
-    return session.exec(select(Order).offset(skip).limit(limit)).all()
+def read_orders(user: str = Query(default=None), session: Session = Depends(get_session)):
+    statement = select(Order)
+    if user:
+        statement = statement.filter(Order.user_id == user)
+    return session.exec(statement).all()
 
 
-@router.get("/{order_id}", response_model=Order)
+@ router.get("/{order_id}", response_model=Order)
 def read_order(order_id: int, session: Session = Depends(get_session)):
     order = session.get(Order, order_id)
     if order is None:
@@ -31,7 +34,7 @@ def read_order(order_id: int, session: Session = Depends(get_session)):
     return order
 
 
-@router.put("/{order_id}", response_model=Order)
+@ router.put("/{order_id}", response_model=Order)
 def update_order(order_id: int, order: Order, session: Session = Depends(get_session)):
     existing_order = session.get(Order, order_id)
     if existing_order is None:
@@ -46,7 +49,7 @@ def update_order(order_id: int, order: Order, session: Session = Depends(get_ses
     return existing_order
 
 
-@router.patch("/{order_id}", response_model=Order)
+@ router.patch("/{order_id}", response_model=Order)
 def patch_order(order_id: int, order_update: OrderUpdate, session: Session = Depends(get_session)):
     existing_order = session.get(Order, order_id)
     if existing_order is None:
@@ -61,7 +64,7 @@ def patch_order(order_id: int, order_update: OrderUpdate, session: Session = Dep
     return existing_order
 
 
-@router.delete("/{order_id}", response_model=Order)
+@ router.delete("/{order_id}", response_model=Order)
 def delete_order(order_id: int, session: Session = Depends(get_session)):
     order = session.get(Order, order_id)
     if order is None:
@@ -69,4 +72,3 @@ def delete_order(order_id: int, session: Session = Depends(get_session)):
     session.delete(order)
     session.commit()
     return order
-

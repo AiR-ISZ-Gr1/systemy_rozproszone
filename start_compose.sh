@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 #  polecenie Docker Compose dla logowania i rejestracji
 docker compose -f app/login_register/docker-compose.yml up -d --build
 
@@ -17,3 +18,6 @@ docker compose -f app/processes/chatbot/docker-compose.yml up -d --build
 
 # polecenie Docker Compose dla forntendu
 docker compose -f app/frontend/docker-compose.yml up -d --build
+
+docker compose -f app/controllers/customer/history_orders/docker-compose.yml up -d --build
+

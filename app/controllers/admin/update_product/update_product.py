@@ -13,16 +13,12 @@ class Product(BaseModel):
     id: str = Field(default_factory=lambda: generate(size=10))
     name: str
     description: str = "default description"
-    sale_price: float = 0
+    sell_price: float = 0
     quantity: int = 0
     buy_price: float = 0
     date: str
-    picture_path: str
+    image_id: str
 
-products_db = [
-    {"id": 1, "name": "Product 1", "description": "Description 1", "price": 10.0, "image_url": "url1"},
-    {"id": 2, "name": "Product 2", "description": "Description 2", "price": 20.0, "image_url": "url2"}
-]
 
 @app.get("/products", response_model=List[Product])
 async def get_products():
@@ -46,7 +42,8 @@ async def get_product(product_id: str):
 async def update_product(product_id: str, updated_product: Product):
     async with aiohttp.ClientSession() as session:
         async with session.put(f"{base_url}/products/{product_id}", json=updated_product.dict()) as response:
-            return response
+            
+            return await response.json()
             # if product_index is None:
             #     raise HTTPException(status_code=404, detail="Product not found")
             # products_db[product_index] = updated_product.dict()

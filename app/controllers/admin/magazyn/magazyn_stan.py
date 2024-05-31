@@ -1,50 +1,42 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
 from typing import List
-import random
+import requests
+from pydantic import BaseModel
+
+from config import Product
+
+###
+# WAREHOUSE
+# backend for warehouse operations e.g. restock
+###
 
 app = FastAPI()
+api_url = "http://api:8000"
 
-class Product(BaseModel):
-    id: int
-    name: str
-    price: float
-    stock: int
 
-# In-memory storage for products
-products = []
-
-# Function to generate random products
-def generate_random_products(num_products: int):
-    for i in range(1, num_products + 1):
-        product = Product(
-            id=i,
-            name=f"Product {i}",
-            price=round(random.uniform(10.0, 100.0), 2),
-            stock=random.randint(0, 50)
-        )
-        products.append(product)
-
-# Generate 30 random products at startup
-generate_random_products(30)
-
+# get all products
 @app.get("/products/", response_model=List[Product])
 def get_products():
-    return products
+    response = requests.get(f'{api_url}/products')
+    return [Product(**product) for product in response.json()]
 
-@app.get("/products/low_stock/", response_model=List[Product])
-def get_low_stock_products():
-    return [product for product in products if product.stock < 20]
 
-@app.post("/products/", response_model=Product)
-def add_product(product: Product):
-    products.append(product)
-    return product
+# get only products with quantity lower than treshold
+@app.get("/products/low_stock/{threshold}", response_model=List[Product])
+def get_low_stock_products(threshold: int):
+    products = get_products()
+    return [product for product in products if product.quantity < threshold]
 
-@app.put("/products/{product_id}", response_model=Product)
-def update_product_stock(product_id: int, additional_stock: int):
-    for product in products:
-        if product.id == product_id:
-            product.stock += additional_stock
-            return product
-    raise HTTPException(status_code=404, detail="Product not found")
+
+# helper class for @app.post below
+class Stock(BaseModel):
+    additional_stock : int
+
+# restock product given bought batch
+@app.post("/products/restock/{product_id}", response_model=Product)
+def restock_product(product_id: str, additional_stock: Stock):
+    response = requests.get(f"{api_url}/products/{product_id}")
+    product_to_restock = Product(**response.json())
+    product_to_restock.quantity += additional_stock.additional_stock
+    response = requests.put(f"{api_url}/products/{product_id}", json=product_to_restock.dict())
+    return response

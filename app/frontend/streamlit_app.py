@@ -6,9 +6,13 @@ from front_objects.login_register import login_register_front
 from front_objects.utils import Links
 
 # make_sidebar()
-
+st.set_page_config(page_title="Plant Shop", page_icon="🌱", layout="wide")
 st.title("**Welcome our plant shop!**")
-
+left_co, cent_co,last_co = st.columns(3)
+with cent_co:
+    st.image("plant_shop.webp")
+    
+    
 st.write("created by **Bartosz Bartoszewski**, **Adam Filapek**, **Łukasz Faruga**, **Kacper Jarzyna**")
 st.session_state.logged_in = False
 
@@ -22,3 +26,4 @@ if st.session_state.logged_in == True:
         sleep(0.2)
         print()
         st.switch_page(Links.MAIN_USER_PAGE)
+        

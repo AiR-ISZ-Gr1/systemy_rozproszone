@@ -3,6 +3,7 @@ import secrets
 import streamlit as st
 from string import punctuation
 from .utils import Links
+import time
 
 API_BASE_URL = Links.BACKEND_BASE_URL
 
@@ -32,7 +33,7 @@ def login_register_front():
                 st.session_state.logged_in = True
                 st.session_state.username = username
                 st.session_state.is_admin = response.get('is_admin', False)
-                print(st.session_state.is_admin)
+                st.session_state.user_id = response.get('user_id')
             else:
                 st.error(f'{response.get("detail")}')
 
@@ -57,6 +58,8 @@ def login_register_front():
                     
                     if response.get('message') == 'User registered successfully.':
                         st.success("Registered successfully! Please log in.")
+                        time.sleep(1)
+                        st.experimental_rerun()
                     elif response.get('detail') == 'Username already exists':
                         st.error("This username is already in use.")
                     else:
