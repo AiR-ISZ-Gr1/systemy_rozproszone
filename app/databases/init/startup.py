@@ -12,7 +12,7 @@ def create_user(username, password, is_admin=False):
         "password": password,
         "is_admin": is_admin
     }
-    response = requests.post("http://api:8000/users", json=user_data)
+    response = requests.post("http://api:8000/users/register/", json=user_data)
     return response.json()
 
 def create_products(data):
@@ -64,8 +64,8 @@ def main():
     qdrant_url = "http://qdrant:6333"
     process_data(data, qdrant_url)
     create_products(data)
-    create_user('TestA','$2b$12$meniORIUdo8SfneabgfLo.viBtenQXJN1GWvZNlaFYgZSOgjQIKMW',1)
-    create_user('TestU','$2b$12$meniORIUdo8SfneabgfLo.viBtenQXJN1GWvZNlaFYgZSOgjQIKMW',0)
+    create_user('TestA','!234qwer',1)
+    create_user('TestU','!234qwer',0)
 
 if __name__ == "__main__":
     main()
