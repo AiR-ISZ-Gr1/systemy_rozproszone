@@ -8,32 +8,28 @@ api_url = "http://magazyn_stan:8005"
 a_url = "http://api:8000"
 
 # returns products with quantity up to threshold
-def get_low_stock_products(threshold: int = 5):
+def get_low_stock_products(threshold: int = 50):
     response = requests.get(f"{api_url}/products/low_stock/{threshold}")
     return [Product(**product) for product in response.json()]
 
 # restock product given their id and additional stock
 def restock_product(product_id: str, additional_stock: int = 5):
-    response = requests.put(f"{api_url}/products/restock/{product_id}/{additional_stock}") #, json={'product_id': product_id, 'additional_stock': additional_stock})
+    response = requests.post(f"{api_url}/products/restock/{product_id}", json={'additional_stock': additional_stock})
     return response
-    # response = requests.get(f"{a_url}/products/{product_id}")
-    # product_to_restock = Product(**response.json())
-    # product_to_restock.quantity += additional_stock
-    # response = requests.put(f"{a_url}/products/{product_id}", json=product_to_restock.dict())
-    # return product_to_restock
 
 
 st.title("Product Management")
 
+stock_threshold = st.number_input(f"Enter stock threshold", min_value=1, max_value=1000)
 
-low_stock_products = get_low_stock_products()
-st.write(low_stock_products)
+low_stock_products = get_low_stock_products(stock_threshold)
+# st.write(low_stock_products)
 
 if low_stock_products:
     st.header("Products with Low Stock")
     for product in low_stock_products:
-        st.subheader(f"Product ID: {product.id} - {product.name}")
-        st.write(f"Price: {product.buy_price}")
+        st.subheader(f"Product name: {product.name}")
+        # st.write(f"Price: {product.buy_price}")
         st.write(f"Current Stock: {product.quantity}")
         additional_stock = st.number_input(f"Order additional stock for {product.name}", min_value=1, max_value=100, key=product.id)
         if st.button(f"Order for {product.name}", key=f"order_{product.id}"):
