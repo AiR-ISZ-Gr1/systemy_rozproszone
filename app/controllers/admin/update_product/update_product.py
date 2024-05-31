@@ -43,8 +43,6 @@ async def update_product(product_id: str, updated_product: Product):
     async with aiohttp.ClientSession() as session:
         async with session.put(f"{base_url}/products/{product_id}", json=updated_product.dict()) as response:
             
-            
-            
             return await response.json()
             # if product_index is None:
             #     raise HTTPException(status_code=404, detail="Product not found")
