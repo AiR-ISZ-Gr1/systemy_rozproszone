@@ -5,7 +5,7 @@ __pycache__/
 *.pyc
 .venv/
 .vscode/
-
+.app/processes/chatbot/model/
 #python gitignore
 *.pyo
 *.pyd
