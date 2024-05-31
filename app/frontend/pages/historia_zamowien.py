@@ -7,6 +7,7 @@ make_sidebar()
 
 
 def get_order_history(username):
+    print(username)
     try:
         response = requests.get(f"http://history_order:8007/orders/{username}")
         response.raise_for_status()
