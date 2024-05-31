@@ -34,7 +34,7 @@ class RecomendSystem:
                         if st.button(f' {produkt["nazwa"]} '):
                             st.session_state.selected_product = produkt
                             st.switch_page(Links.PRODUCT_DETAILSC)
-                        st.image(produkt["zdjecie"], width=60)
+                        # st.image(produkt["zdjecie"], width=60)
                         st.write(f"**{produkt['nazwa']}**")
                         st.write(f"Cena: {produkt['cena']}")
                         indeks_produktu += 1

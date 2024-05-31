@@ -62,15 +62,18 @@ if selected_product_name is not None:
                 buy_price=buy_price,
                 tags=tags
             )
-
-            if image is None:
-                image_id = selected_product["image_id"]
-            else:
-                updated_product.add_product_image(image)
-                
-            response = requests.put(f"{api_url}/products/{selected_product_id}", json=updated_product.dict())
-            
+            response = requests.get(f'{api_url}/products/name/{updated_product.name}')
             if response.status_code == 200:
-                st.success("Product updated successfully")
+                st.error('Taka nazwa produktu już istnieje!')
             else:
-                st.error("Failed to update product")
+                if image is None:
+                    image_id = selected_product["image_id"]
+                else:
+                    updated_product.add_product_image(image)
+                    
+                response = requests.put(f"{api_url}/products/{selected_product_id}", json=updated_product.dict())
+                
+                if response.status_code == 200:
+                    st.success("Product updated successfully")
+                else:
+                    st.error("Failed to update product")
