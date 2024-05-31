@@ -49,9 +49,9 @@ if submitted:
             "postal_code": kod_pocztowy,
             "email": email,
             "payment_method": metoda_platnosci,
-            "user_id": st.state.user_id,
+            "user_id": st.session_state.user_id,
         }
-
+        
         response = requests.post(
             "http://send_order:8006/submit_order/", json=order_data)
 

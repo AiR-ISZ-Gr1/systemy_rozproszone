@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 import requests
 import logging
+from typing import Optional
 
 app = FastAPI()
 
@@ -19,7 +20,7 @@ class OrderDb(BaseModel):
 
 
 class Address(BaseModel):
-    id: int | None = None
+    id: Optional[int] = None
     name: str
     street: str
     city: str
