@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 import requests
 import logging
-from typing import Optional
+from typing import Optional, List
 
 app = FastAPI()
 
@@ -27,6 +27,11 @@ class Address(BaseModel):
     postal_code: str
 
 
+class CartItem(BaseModel):
+    product_id: str
+    quantity: int
+
+
 class Order(BaseModel):
     first_name: str
     last_name: str
@@ -35,7 +40,6 @@ class Order(BaseModel):
     postal_code: str
     email: str
     payment_method: str
-    order_summary: list  # Changed from dict to list
     user_id: int
 
 
@@ -54,6 +58,26 @@ async def submit_order(order: Order):
     response = requests.post(f"http://api:8000/users/{order.user_id}").json()
     cart_id = response.cart_id
 
+    items: List[CartItem] = requests.get(
+        f"http://api:8000/carts/{cart_id}/items").json()
+
+    items_data = [
+        requests.get(f"http://api:8000/products/{item.product_id}").json()
+        for item in items
+    ]
+
+    missing_quantity = [
+        data.name
+        for item, data in zip(items, items_data)
+        if item.quantity > data.quantity
+    ]
+
+    if missing_quantity:
+        return JSONResponse(
+            status_code=522,
+            content=f"The following products are missing: {missing_quantity}"
+        )
+
     dborder = OrderDb(
         status="placed",
         total_amount=420,
@@ -63,6 +87,9 @@ async def submit_order(order: Order):
     )
     response = requests.get("http://api:8000/orders",
                             json=dborder.model_dump()).json()
+
+    response = requests.post(
+        f"http://api:8000/users/{order.user_id}/cart").json()
 
     return dict(message="OK")
 

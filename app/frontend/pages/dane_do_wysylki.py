@@ -3,6 +3,7 @@ import pandas as pd
 import re
 import requests
 from front_objects.navigation import make_sidebar
+from pydantic import BaseModel
 
 make_sidebar()
 
@@ -15,6 +16,11 @@ Proszę o uzupełnienie poniższych danych, abyśmy mogli dostarczyć zamówieni
 )
 
 # Function to validate email
+
+
+class CartItem(BaseModel):
+    product_id: str
+    quantity: int
 
 
 def sprawdz_email(email):
@@ -50,8 +56,11 @@ if submitted:
             "email": email,
             "payment_method": metoda_platnosci,
             "user_id": st.session_state.user_id,
+            "order_summary": [
+
+            ]
         }
-        
+
         response = requests.post(
             "http://send_order:8006/submit_order/", json=order_data)
 
