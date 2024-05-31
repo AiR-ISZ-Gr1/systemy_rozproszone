@@ -26,9 +26,10 @@ tags = st.multiselect(
     ["Flower"])
 image = st.file_uploader('Photo of the product', type=['jpg', 'jpeg', 'png'])
 
+api_callback='http://api:8000'
 
 if st.button('Dodaj produkt'):
-    if name and description and sell_price and quantity and buy_price and tags:
+    if name and description and sell_price and quantity and buy_price and tags and image:
         product = Product(
             name = name,
             description = description,
@@ -37,15 +38,19 @@ if st.button('Dodaj produkt'):
             buy_price = buy_price,
             tags = tags
         )
-        product.add_product_image(image)
-
-        # Wysłanie danych do FastAPI
-        api_callback='http://api:8000'
-        response = requests.post(f'{api_callback}/products/', json=product.dict())
-
+        response = requests.get(f'{api_callback}/products/name/{product.name}')
         if response.status_code == 200:
-            st.success('Produkt został dodany pomyślnie!')
+            st.error('Taka nazwa produktu już istnieje!')
         else:
-            st.error('Wystąpił błąd podczas dodawania produktu.')
+            product.add_product_image(image)
+
+            # Wysłanie danych do FastAPI
+            
+            response = requests.post(f'{api_callback}/products/', json=product.dict())
+
+            if response.status_code == 200:
+                st.success('Produkt został dodany pomyślnie!')
+            else:
+                st.error('Wystąpił błąd podczas dodawania produktu.')
     else:
         st.warning('Proszę wypełnić wszystkie pola.')

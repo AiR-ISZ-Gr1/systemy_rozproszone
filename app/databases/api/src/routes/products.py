@@ -41,6 +41,14 @@ async def read_product(product_id: str):
     else:
         raise HTTPException(status_code=404, detail="Product not found")
 
+# find product by name
+@router.get("/name/{product_name}", response_model=Product)
+async def read_product(product_name: str):
+    product = collection.find_one({"name": product_name})
+    if product:
+        return product
+    else:
+        raise HTTPException(status_code=404, detail="Product not found")
 
 @router.put("/{product_id}", response_model=Product)
 async def update_product(product_id: str, product: Product):

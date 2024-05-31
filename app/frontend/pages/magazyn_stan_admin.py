@@ -34,7 +34,7 @@ if low_stock_products:
         additional_stock = st.number_input(f"Order additional stock for {product.name}", min_value=1, max_value=100, key=product.id)
         if st.button(f"Order for {product.name}", key=f"order_{product.id}"):
             updated_product = restock_product(product.id, additional_stock)
-            st.write(updated_product)
+            st.write(updated_product.text)
             st.success(f"Ordered additional {additional_stock} units for {product.name}. New stock: ")
 else:
     st.write("No products with low stock.")
