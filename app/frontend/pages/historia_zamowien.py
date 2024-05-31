@@ -6,10 +6,10 @@ from front_objects.utils import Links
 make_sidebar()
 
 
-def get_order_history(username):
-    print(username)
+def get_order_history(user_id):
+    print(user_id)
     try:
-        response = requests.get(f"http://history_order:8007/orders/{username}")
+        response = requests.get(f"http://history_order:8007/orders/{user_id}")
         response.raise_for_status()
         return response.json()
     except requests.exceptions.HTTPError as err:
