@@ -12,7 +12,7 @@ import requests
 from PIL import Image
 from io import BytesIO
 
-from app.databases.api.src.models.product import Product, add_product_image, image_download_url, image_upload_url
+from product import Product, add_product_image, image_download_url, image_upload_url
 
 app = FastAPI()
 base_url = "http://api:8000"

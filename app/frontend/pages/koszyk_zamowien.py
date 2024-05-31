@@ -17,11 +17,11 @@ def change_quantity(item_id, quantity, product_id):
 st.write("# 🛒 KOSZYK ZAMÓWIEŃ")
 
 get_items_in_cart = requests.get(f"{base_url}/users/{st.session_state.user_id}/cart/items").json()
-if len(get_items_in_cart) == 0:
-    st.write("Twój koszyk jest pusty")
-    st.stop()
-else:
+
+
+if type(get_items_in_cart) == list and len(get_items_in_cart) > 0:
     # Headers for the table
+    
     col1, col2, col3, col4, col5 = st.columns([2, 1, 1, 1, 2])
 
     col1.subheader("Nazwa produktu")
@@ -67,3 +67,5 @@ else:
 
     if st.button("Podsumuj zamówienie"):
         st.switch_page(Links.SEND_PAGE)
+else:
+    st.write("Twój koszyk jest pusty.")

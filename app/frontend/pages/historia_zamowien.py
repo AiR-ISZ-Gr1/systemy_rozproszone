@@ -8,15 +8,21 @@ make_sidebar()
 
 def get_order_history(user_id):
     print(user_id)
+    st.write(user_id)
     try:
-        response = requests.get(f"http://history_order:8007/orders/{user_id}")
+        response = requests.get(f"http://history_orders:8007/orders/{user_id}")
         response.raise_for_status()
-        return response.json()
+        orders = response.json()
+        st.write(orders)
+        return [
+            order | dict(order_id=order['id'])
+            for order in orders
+        ]
     except requests.exceptions.HTTPError as err:
         st.error(f"HTTP error occurred: {err}")
     except Exception as err:
         pass
-        # st.error(f"An error occurred: {err}")
+        st.error(f"An error occurred: {err}")
 
 
 def display_order_details(order):

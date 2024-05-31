@@ -9,8 +9,17 @@ app = FastAPI()
 # Endpoint do pobierania historii zamówień
 @app.get("/orders/{user}")
 async def get_order_history(user: str):
-    response = requests.get(f"http://api:8000/orders?user={user}",).json()
+    response = requests.get(f"http://api:8000/orders", params=dict(user=user)).json()
     if response:
+        for order in response:
+            products_ids = [
+                item['product_id']
+                for item in requests.get(f"http://api:8000/carts/{order['cart_id']}/items").json()
+            ]
+            order['products'] = [
+                requests.get(f"http://api:8000/products/{id}").json()
+                for id in products_ids                
+            ]
         return response
     else:
         raise HTTPException(status_code=404, detail="Orders not found")

@@ -1,5 +1,5 @@
 # Pobierz oficjalny obraz Pythona
-FROM python:3.9-slim
+FROM python:3.11-slim
 
 # Ustaw katalog roboczy
 WORKDIR /app
