@@ -8,29 +8,6 @@ from config import Product
 app = FastAPI()
 api_url = "http://api:8000"
 
-# class Product(BaseModel):
-#     id: int
-#     name: str
-#     price: float
-#     stock: int
-
-# # In-memory storage for products
-# products = []
-
-# # Function to generate random products
-# def generate_random_products(num_products: int):
-#     for i in range(1, num_products + 1):
-#         product = Product(
-#             id=i,
-#             name=f"Product {i}",
-#             price=round(random.uniform(10.0, 100.0), 2),
-#             stock=random.randint(0, 50)
-#         )
-#         products.append(product)
-
-# # Generate 30 random products at startup
-# generate_random_products(30)
-
 
 @app.get("/products/", response_model=List[Product])
 def get_products():
@@ -42,7 +19,7 @@ def get_products():
 def get_low_stock_products():
     products = get_products()
 
-    return [product for product in products if product['quantity'] < 20]
+    return products.json() # [product for product in products if product['quantity'] < 20]
 
 @app.post("/products/", response_model=Product)
 def add_product(product: Product):

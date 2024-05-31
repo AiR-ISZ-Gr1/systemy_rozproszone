@@ -4,11 +4,12 @@ from front_objects.navigation_admin import make_sidebar
 from front_objects.product import Product
 
 make_sidebar()
-api_url = "http://api:8000"
+api_url = "http://magazyn_stan:8005"
 
 def get_low_stock_products():
-    response = requests.get(f"{api_url}/products/low_stock/")
-    return response.json()
+    products = requests.get(f"{api_url}/products/low_stock/")
+    return products.json() # [Product(**product) for product in products]
+
 
 def order_product(product_id, additional_stock):
     response = requests.put(f"{api_url}/products/{product_id}", json={"additional_stock": additional_stock})
@@ -16,7 +17,9 @@ def order_product(product_id, additional_stock):
 
 st.title("Product Management")
 
+
 low_stock_products = get_low_stock_products()
+st.write(low_stock_products)
 
 if low_stock_products:
     st.header("Products with Low Stock")

@@ -22,3 +22,7 @@ if st.session_state.logged_in == True:
         sleep(0.2)
         print()
         st.switch_page(Links.MAIN_USER_PAGE)
+        
+left_co, cent_co,last_co = st.columns(3)
+with cent_co:
+    st.image("agh_znak.psd", width=200)
