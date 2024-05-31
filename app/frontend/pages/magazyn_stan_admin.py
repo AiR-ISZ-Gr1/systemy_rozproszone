@@ -36,5 +36,6 @@ if low_stock_products:
             updated_product = restock_product(product.id, additional_stock)
             st.write(updated_product.text)
             st.success(f"Ordered additional {additional_stock} units for {product.name}. New stock: ")
+            st.experimental_rerun()
 else:
     st.write("No products with low stock.")
