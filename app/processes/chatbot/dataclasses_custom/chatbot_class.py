@@ -3,23 +3,34 @@ from typing import List
 from sentence_transformers import SentenceTransformer
 import aiohttp
 import asyncio
+import logging
 
 class Chatbot:
     openai_client: AsyncOpenAI
     embedding_model: SentenceTransformer
 
-    def __init__(self, data, embedding_model):
+    def __init__(self, data):
         self.openai_client = data.pop('openai_client', None)
-        self.embedding_model = embedding_model
 
-    async def answer(self, question: str) -> str:
-        system, user = await self.__prepare_question(question)
-        chat_completion = await self.openai_client.chat.completions.create(
+    async def answer(self, system: str, user: str):
+        async for chunk in await self.openai_client.chat.completions.create(
             model="gpt-3.5-turbo-0125",
             messages=[{"role": "system", "content": system},
-                      {"role": "user", "content": user}]
-        )
-        return chat_completion.choices[0].message.content
+                      {"role": "user", "content": user}],
+                      stream=True):
+            current_content = chunk.choices[0].delta.content
+            if current_content:
+                yield current_content
+
+class PromptFiller:
+    embedding_model: SentenceTransformer
+    def __init__(self,embedding_model):
+        self.embedding_model = embedding_model
+
+    async def prepare_question(self, question: str):
+        qdrant_result = await self.__qdrant_search(question)
+        mongo_result = await self.__search_mongo(qdrant_result)
+        return self.__fill_prompt(question, mongo_result)
 
     def __fill_prompt(self, question: str, jsons: List[str]) -> List[str]:
         SYSTEM_TEMPLATE = """You are a professional flower shop assistant, you recommend products that fulfill
@@ -27,7 +38,7 @@ class Chatbot:
         {}
         Always check the quantity before recommending. If it's equal to 0, ask to wait until restock.
         If none of the products fulfill expectations, say that sadly we don't have the product you need.
-        Your answer should be short and contain only the flower you recommend, reasoning why, and a friendly insight.
+        Your answer should be long and contain only the flower you recommend, reasoning why, and a friendly insight.
         Don't encourage further conversation.
         """
         filled_prompt = SYSTEM_TEMPLATE.format(jsons)
@@ -70,7 +81,3 @@ class Chatbot:
 
         return all_jsons
 
-    async def __prepare_question(self, question: str):
-        qdrant_result = await self.__qdrant_search(question)
-        mongo_result = await self.__search_mongo(qdrant_result)
-        return self.__fill_prompt(question, mongo_result)

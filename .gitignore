@@ -5,7 +5,8 @@ __pycache__/
 *.pyc
 .venv/
 .vscode/
-.app/processes/chatbot/model/
+app/processes/chatbot/model/
+app/databases/qdrant/
 #python gitignore
 *.pyo
 *.pyd
