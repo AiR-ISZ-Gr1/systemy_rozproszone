@@ -1,13 +1,32 @@
 from fastapi import FastAPI, HTTPException, Request
-from pydantic import BaseModel
-import pandas as pd
-import os
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel, Field
+from datetime import datetime
+import requests
 import logging
 
 app = FastAPI()
 
+
+class OrderDb(BaseModel):
+    cart_id: int
+    user_id: int
+    address_id: int
+    date: str = Field(
+        default_factory=lambda: datetime.now().strftime("%d-%m-%Y %H:%M:%S"))
+    status: str
+    total_amount: float
+
+
+class Address(BaseModel):
+    id: int | None = None
+    name: str
+    street: str
+    city: str
+    postal_code: str
+
+
 class Order(BaseModel):
-    username: str
     first_name: str
     last_name: str
     address: str
@@ -16,24 +35,38 @@ class Order(BaseModel):
     email: str
     payment_method: str
     order_summary: list  # Changed from dict to list
+    user_id: int
+
 
 @app.post("/submit_order/")
 async def submit_order(order: Order):
-    try:
-        file_exists = os.path.isfile('orders.csv')
-        df = pd.DataFrame([order.dict()])
+    address = Address(
+        name=f"{order.first_name} {order.last_name}",
+        street=order.address,
+        city=order.city,
+        postal_code=order.postal_code,
+    )
+    response = requests.post("http://api:8000/addresses",
+                             json=address.model_dump()).json()
+    address_id = response.id
 
-        if file_exists:
-            df.to_csv('../send_order/orders.csv', mode='a', header=False, index=False)
-        else:
-            df.to_csv('../send_order/orders.csv', index=False)
+    response = requests.post(f"http://api:8000/users/{order.user_id}").json()
+    cart_id = response.cart_id
 
-        return {"message": "Order received successfully"}
-    except Exception as e:
-        logging.error(f"Error processing order: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+    dborder = OrderDb(
+        status="placed",
+        total_amount=420,
+        address_id=address_id,
+        user_id=order.user_id,
+        cart_id=cart_id,
+    )
+    response = requests.get("http://api:8000/orders",
+                            json=dborder.model_dump()).json()
 
-@app.exception_handler(422)
+    return dict(message="OK")
+
+
+@ app.exception_handler(422)
 async def validation_exception_handler(request: Request, exc):
     logging.error(f"Validation error: {exc.body}")
     return JSONResponse(
