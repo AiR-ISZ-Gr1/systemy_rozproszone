@@ -53,23 +53,29 @@ async def submit_order(order: Order):
     )
     response = requests.post("http://api:8000/addresses",
                              json=address.model_dump()).json()
-    address_id = response.id
+    address_id = response['id']
 
     response = requests.post(f"http://api:8000/users/{order.user_id}").json()
-    cart_id = response.cart_id
+    
+    if 'cart_id' not in response:
+        response = requests.post(
+        f"http://api:8000/users/{order.user_id}/cart", json={}).json()
+        cart_id = response['id']
+    else:
+        cart_id = response['cart_id']
 
-    items: List[CartItem] = requests.get(
+    items = requests.get(
         f"http://api:8000/carts/{cart_id}/items").json()
 
     items_data = [
-        requests.get(f"http://api:8000/products/{item.product_id}").json()
+        requests.get(f"http://api:8000/products/{item['product_id']}").json()
         for item in items
     ]
 
     missing_quantity = [
-        data.name
+        data['name']
         for item, data in zip(items, items_data)
-        if item.quantity > data.quantity
+        if item['quantity'] > data['quantity']
     ]
 
     if missing_quantity:
@@ -89,12 +95,12 @@ async def submit_order(order: Order):
                             json=dborder.model_dump()).json()
 
     response = requests.post(
-        f"http://api:8000/users/{order.user_id}/cart").json()
+        f"http://api:8000/users/{order.user_id}/cart", json={}).json()
 
     return dict(message="OK")
 
 
-@ app.exception_handler(422)
+@app.exception_handler(422)
 async def validation_exception_handler(request: Request, exc):
     logging.error(f"Validation error: {exc.body}")
     return JSONResponse(
