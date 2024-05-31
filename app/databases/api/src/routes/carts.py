@@ -104,8 +104,6 @@ def create_or_update_cart_item(cart_id: int, item_data: CartItem, session: Sessi
 def read_cart_items(cart_id: int, session: Session = Depends(get_session)):
     cart_items = session.exec(select(CartItem).filter(
         CartItem.cart_id == cart_id)).all()
-    if not cart_items:
-        raise HTTPException(status_code=404, detail="Cart items not found")
     return cart_items
 
 

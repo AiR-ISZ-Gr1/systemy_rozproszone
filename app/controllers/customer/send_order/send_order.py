@@ -86,16 +86,17 @@ async def submit_order(order: Order):
 
     dborder = OrderDb(
         status="placed",
-        total_amount=420,
+        total_amount=420.0,
         address_id=address_id,
         user_id=order.user_id,
         cart_id=cart_id,
     )
-    response = requests.get("http://api:8000/orders",
+    response = requests.post("http://api:8000/orders",
                             json=dborder.model_dump()).json()
 
-    response = requests.post(
-        f"http://api:8000/users/{order.user_id}/cart", json={}).json()
+    # duplicate of
+    # response = requests.post(
+    #     f"http://api:8000/users/{order.user_id}/cart", json={}).json()
 
     return dict(message="OK")
 
