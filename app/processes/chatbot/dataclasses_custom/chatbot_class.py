@@ -1,14 +1,10 @@
 from openai import AsyncOpenAI
 from typing import List
-from sentence_transformers import SentenceTransformer
 import aiohttp
 import asyncio
-import logging
 
 class Chatbot:
     openai_client: AsyncOpenAI
-    embedding_model: SentenceTransformer
-
     def __init__(self, data):
         self.openai_client = data.pop('openai_client', None)
 
@@ -23,14 +19,15 @@ class Chatbot:
                 yield current_content
 
 class PromptFiller:
-    embedding_model: SentenceTransformer
-    def __init__(self,embedding_model):
-        self.embedding_model = embedding_model
-
     async def prepare_question(self, question: str):
         qdrant_result = await self.__qdrant_search(question)
         mongo_result = await self.__search_mongo(qdrant_result)
         return self.__fill_prompt(question, mongo_result)
+    
+    async def get_names(self, question:str):
+        qdrant_result = await self.__qdrant_search(question)
+        mongo_result = await self.__search_mongo(qdrant_result)
+        return mongo_result
 
     def __fill_prompt(self, question: str, jsons: List[str]) -> List[str]:
         SYSTEM_TEMPLATE = """You are a professional flower shop assistant, you recommend products that fulfill
@@ -45,9 +42,8 @@ class PromptFiller:
         return filled_prompt, question
 
     async def __qdrant_search(self, question: str):
-        vector = self.embedding_model.encode(question, normalize_embeddings=True).tolist()
         async with aiohttp.ClientSession() as session:
-            async with session.post(f"http://api:8000/products/vec_search", json= vector) as response:
+            async with session.post("http://api:8000/products/vec_search/", json={'question': question}) as response:
                 if response.status == 200:
                     return await response.json()
                 else:
@@ -76,7 +72,7 @@ class PromptFiller:
                     'Name': item.get('name'),
                     'Description': item.get('description'),
                     'Quantity': item.get('quantity')
-                }
+                    }
                 all_jsons.append(json_data)
 
         return all_jsons
