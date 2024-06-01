@@ -1,7 +1,5 @@
-from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams
-from qdrant_client.models import PointStruct
 import pandas as pd
 import os
 import requests
@@ -69,9 +67,8 @@ def create_user(username, password,address,cart, is_admin=False):
     else:
         print("user with this name exists")
 
-def process_data(data, qdrant_url: str):
-    model = SentenceTransformer('intfloat/e5-small-v2')
-    vec_len = model[1].word_embedding_dimension
+def init_qdrant(data, qdrant_url: str):
+    vec_len = 384 #lenght of vector for embedding model
     client = QdrantClient(url=qdrant_url)
     names = [item.name for item in client.get_collections().collections]
     
@@ -83,18 +80,6 @@ def process_data(data, qdrant_url: str):
     else:
         print('Collection exists')
 
-    points = [PointStruct(
-                    id=index,
-                    vector=model.encode(item['Description'], normalize_embeddings=True),
-                    payload={"Id": item['id'], "Name": item['Name'], "Description": item['Description']}
-                ) for index, item in data.iterrows()]
-
-    operation_info = client.upsert(
-        collection_name="products_description",
-        wait=True,
-        points=points,
-    )
-    print(operation_info)
 
 def main():
     data_path = 'init_data/products/flowershopdata_clean.csv'
@@ -120,7 +105,7 @@ def main():
                 print('Product created')
 
     qdrant_url = "http://qdrant:6333"
-    process_data(data, qdrant_url)
+    init_qdrant(data, qdrant_url)
     create_user('TestA','!234qwer',1,1,1)
     create_user('TestU','!234qwer',0,0,0)
 

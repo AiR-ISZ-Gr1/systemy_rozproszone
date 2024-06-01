@@ -15,7 +15,7 @@ BOT_AVATAR = "🤖"
 
 def get_stream(question):
     s = requests.Session()
-    with s.get(f'http://chatbot:8009/ask/{question}',json=question, timeout=5, stream=True) as resp:
+    with s.get(f'http://chatbot:8009/ask/{question}', timeout=5, stream=True) as resp:
         for chunk in resp:
             yield chunk.decode()
 
