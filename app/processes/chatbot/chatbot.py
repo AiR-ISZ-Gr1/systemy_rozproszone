@@ -16,3 +16,7 @@ async def answer(question: str):
         return StreamingResponse(bot.answer(system,user), media_type="text/event-stream")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/ask/names/{question}")
+async def get_names(question: str):
+    return [flower.get('Name') for flower in await filler.get_names(question)]

@@ -23,6 +23,11 @@ class PromptFiller:
         qdrant_result = await self.__qdrant_search(question)
         mongo_result = await self.__search_mongo(qdrant_result)
         return self.__fill_prompt(question, mongo_result)
+    
+    async def get_names(self, question:str):
+        qdrant_result = await self.__qdrant_search(question)
+        mongo_result = await self.__search_mongo(qdrant_result)
+        return mongo_result
 
     def __fill_prompt(self, question: str, jsons: List[str]) -> List[str]:
         SYSTEM_TEMPLATE = """You are a professional flower shop assistant, you recommend products that fulfill
@@ -67,7 +72,7 @@ class PromptFiller:
                     'Name': item.get('name'),
                     'Description': item.get('description'),
                     'Quantity': item.get('quantity')
-                }
+                    }
                 all_jsons.append(json_data)
 
         return all_jsons
