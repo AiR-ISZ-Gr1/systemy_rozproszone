@@ -27,10 +27,10 @@ def make_sidebar():
             st.write(f"Welcome **{st.session_state.username}**")
 
 
-            st.page_link(f"{Links.MAIN_USER_PAGE}", label="Produkty", icon="🛍️")
-            st.page_link(f"{Links.PAGE_2}", label="Koszyk zamówień", icon="🛒")
+            st.page_link(f"{Links.MAIN_USER_PAGE}", label="Products", icon="🛍️")
+            st.page_link(f"{Links.PAGE_2}", label="Shopping Cart", icon="🛒")
             st.page_link(f"{Links.CHATBOT_PAGE}", label="Chatbot", icon="💬")
-            st.page_link(f"{Links.ORDER_HISTORY}", label="Historia zamówień", icon="📜")
+            st.page_link(f"{Links.ORDER_HISTORY}", label="Order History", icon="📜")
 
             st.write("")
             st.write("")

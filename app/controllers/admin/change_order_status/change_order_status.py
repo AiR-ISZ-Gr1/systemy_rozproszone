@@ -30,10 +30,10 @@ async def get_order(order_id: int):
         order = response.json()
         products_ids = [
             item['product_id']
-            for item in requests.get(f"http://api:8000/carts/{order['cart_id']}/items").json()
+            for item in requests.get(f"{api_url}/carts/{order['cart_id']}/items").json()
         ]
         order['products'] = [
-            requests.get(f"http://api:8000/products/{id}").json()
+            requests.get(f"{api_url}/products/{id}").json()
             for id in products_ids                
         ]
         return order

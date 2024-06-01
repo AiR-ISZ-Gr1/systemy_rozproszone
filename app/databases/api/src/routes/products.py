@@ -14,7 +14,7 @@ ROUTE_NAME = os.path.basename(__file__).replace(".py", "")
 router = APIRouter(prefix=f"/{ROUTE_NAME}", tags=[ROUTE_NAME])
 collection = mongodb[ROUTE_NAME]
 qdrant_client = AsyncQdrantClient('http://qdrant:6333')
-modelEmbed = SentenceTransformer('intfloat/e5-small-v2',cache_folder='src/model_st')
+modelEmbed = SentenceTransformer('intfloat/e5-small-v2', cache_folder='src/model_st')
 
 
 @router.get("/", response_model=List[Product])

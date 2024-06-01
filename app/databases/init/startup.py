@@ -84,6 +84,10 @@ def init_qdrant(data, qdrant_url: str):
 def main():
     data_path = 'init_data/products/flowershopdata_clean.csv'
     data = pd.read_csv(data_path)
+
+    qdrant_url = "http://qdrant:6333"
+    init_qdrant(data, qdrant_url)
+    
     for _,item in data.iterrows():
         product = Product(
         id =  item['id'],
@@ -104,10 +108,9 @@ def main():
             if response.status_code == 200:
                 print('Product created')
 
-    qdrant_url = "http://qdrant:6333"
-    init_qdrant(data, qdrant_url)
-    create_user('TestA','!234qwer',1,1,1)
-    create_user('TestU','!234qwer',0,0,0)
+    
+    create_user('TestA','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',1,1,1)
+    create_user('TestU','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0,0,0)
 
 if __name__ == "__main__":
     main()
