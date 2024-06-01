@@ -15,5 +15,8 @@ docker compose -f app/processes/chatbot/docker-compose.yml up -d --build
 # polecenie Docker Compose dla forntendu
 docker compose -f app/frontend/docker-compose.yml up -d --build
 
+# compose for history_orders
 docker compose -f app/controllers/customer/history_orders/docker-compose.yml up -d --build
 
+# compose for send_order (koszyk zamowien)
+docker compose -f app/controllers/customer/send_order/docker-compose.yml up -d --build
