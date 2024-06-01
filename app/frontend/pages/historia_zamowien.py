@@ -5,48 +5,42 @@ from front_objects.utils import Links
 
 make_sidebar()
 
-
 def get_order_history(user_id):
-    print(user_id)
-    st.write(user_id)
     try:
         response = requests.get(f"http://history_orders:8007/orders/{user_id}")
         response.raise_for_status()
         orders = response.json()
-        st.write(orders)
-        return [
-            order | dict(order_id=order['id'])
-            for order in orders
-        ]
+        # st.write(orders)
+        return orders
     except requests.exceptions.HTTPError as err:
         st.error(f"HTTP error occurred: {err}")
     except Exception as err:
-        pass
         st.error(f"An error occurred: {err}")
 
-
 def display_order_details(order):
-    st.markdown(f"### Szczegóły zamówienia o ID #{order['order_id']}")
+    st.markdown(f"### Order Details for ID #{order['id']}")
+    st.markdown(f"**Order Status:** {order['status']}")
+    st.markdown(f"**Total Amount:** ${order['total_amount']}")
+    st.markdown(f"**Order Date:** {order['date']}")
 
-    st.markdown(f"**Status Zamówienia:** {order['status']}")
-
-    st.markdown("#### Produkty:")
+    st.markdown("#### Products:")
     for product in order['products']:
         st.markdown(f"""
         <div style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px;">
-            <strong>Produkt:</strong> {product['name']}<br>
-            <strong>Cena:</strong> ${product['price']}<br>
+            <strong>Product:</strong> {product['name']}<br>
+            <strong>Price:</strong> ${product['sell_price']}<br>
+            <strong>Quantity:</strong> {product['quantity']}<br>
+            
         </div>
         """, unsafe_allow_html=True)
 
-        if order['status'] == "Dostarczone" and not product['review']:
-            with st.expander(f"Dodaj opinię o produkcie {product['name']}"):
+        if order['status'] == "delivered" and not product.get('review'):
+            with st.expander(f"Add review for {product['name']}"):
                 review_text = st.text_area(
-                    "Twoja opinia", key=f"review_text_{order['order_id']}_{product['name']}")
-                if st.button("Wyślij opinię", key=f"submit_button_{order['order_id']}_{product['name']}"):
+                    "Your review", key=f"review_text_{order['id']}_{product['name']}")
+                if st.button("Submit Review", key=f"submit_button_{order['id']}_{product['name']}"):
                     send_review(
-                        username, order['order_id'], product['name'], review_text)
-
+                        username, order['id'], product['name'], review_text)
 
 def send_review(username, order_id, product, review):
     review_data = {
@@ -59,14 +53,13 @@ def send_review(username, order_id, product, review):
         response = requests.post(
             "http://history_orders:8007/review", json=review_data)
         response.raise_for_status()
-        st.success(f"Opinia dla produktu {product} została wysłana pomyślnie!")
+        st.success(f"Review for {product} has been successfully submitted!")
     except requests.exceptions.HTTPError as err:
         st.error(f"HTTP error occurred: {err}")
     except Exception as err:
         st.error(f"An error occurred: {err}")
 
-
-st.title("Historia twoich zamówień")
+st.title("Your Order History")
 
 username = st.session_state.get("username", None)
 
@@ -74,12 +67,14 @@ if username:
     orders = get_order_history(st.session_state.user_id)
     if orders:
         for order in orders:
-            if st.button(f"Zamówienie #{order['order_id']}"):
-                st.session_state[f"expanded_order_{order['order_id']}"] = not st.session_state.get(
-                    f"expanded_order_{order['order_id']}", False)
+            if st.button(f"Order #{order['id']}"):
+                st.session_state[f"expanded_order_{order['id']}"] = not st.session_state.get(
+                    f"expanded_order_{order['id']}", False)
 
         for order in orders:
-            if st.session_state.get(f"expanded_order_{order['order_id']}", False):
+            if st.session_state.get(f"expanded_order_{order['id']}", False):
                 display_order_details(order)
     else:
         st.write("No orders found!")
+else:
+    st.write("Please log in to view your order history.")

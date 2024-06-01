@@ -7,21 +7,27 @@ make_sidebar()
 
 API_URL = "http://change_order_status:8004"
 
-
-def fetch_orders(status=None):
-    if status:
-        response = requests.get(f"{API_URL}/orders", params={"status": status})
-    else:
-        response = requests.get(f"{API_URL}/orders")
+def fetch_orders(status='all'):
+    response = requests.get(f"{API_URL}/orders", params={"status": status})
     if response.status_code == 200:
         return [Order(**order) for order in response.json()]
     else:
         return []
 
+# def fetch_orders(status=None):
+#     if status:
+#         response = requests.get(f"{API_URL}/orders", params={"status": status})
+#     else:
+#         response = requests.get(f"{API_URL}/orders")
+#     if response.status_code == 200:
+#         return [Order(**order) for order in response.json()]
+#     else:
+#         return []
+
 def fetch_order_by_id(order_id):
     response = requests.get(f"{API_URL}/orders/{order_id}")
     if response.status_code == 200:
-        return response.json()
+        return Order(**response.json())
     else:
         return None
 
@@ -36,15 +42,15 @@ search_id = st.text_input("Enter Order ID to search")
 if search_id:
     order = fetch_order_by_id(search_id)
     if order:
-        st.write(f"Order ID: {order['order_id']}")
-        st.write(f"Order Date: {order['order_date']}")
-        st.write(f"Customer ID: {order['customer_id']}")
-        st.write(f"Status: {order['status']}")
+        st.write(f"Order ID: {order.id}")
+        st.write(f"Order Date: {order.date}")
+        st.write(f"Customer ID: {order.user_id}")
+        st.write(f"Status: {order.status}")
         
-        new_status = st.selectbox("Change Status", ["cancelled", "ready to ship", "shipped"], key=order['order_id'])
-        if st.button("Update Status", key=f"update_{order['order_id']}"):
-            if update_order_status(order['order_id'], new_status):
-                st.success(f"Order {order['order_id']} status updated to {new_status}")
+        new_status = st.selectbox("Change Status", ["cancelled", "ready to ship", "shipped"], key=order.id)
+        if st.button("Update Status", key=f"update_{order.id}"):
+            if update_order_status(order.id, new_status):
+                st.success(f"Order {order.id} status updated to {new_status}")
             else:
                 st.error("Failed to update order status")
     else:

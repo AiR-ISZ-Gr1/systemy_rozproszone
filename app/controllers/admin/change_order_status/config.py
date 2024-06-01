@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Optional
 
 
-class Order(SQLModel, table=True):
+class Order(SQLModel, table=False):
     id: Optional[int] = Field(default=None, primary_key=True)
     cart_id: int = Field(foreign_key="cart.id")
     user_id: int = Field(foreign_key="user.id")
