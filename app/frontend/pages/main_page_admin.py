@@ -9,7 +9,7 @@ from PIL import Image
 from io import BytesIO
 # from app.databases.api.src.models.product import Product
 from front_objects.navigation_admin import make_sidebar
-from front_objects.product import Product
+from front_objects.classes.product import Product
 make_sidebar()
 
 

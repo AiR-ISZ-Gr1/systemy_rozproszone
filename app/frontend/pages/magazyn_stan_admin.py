@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 from front_objects.navigation_admin import make_sidebar
-from front_objects.product import Product
+from front_objects.classes.product import Product
 
 make_sidebar()
 api_url = "http://magazyn_stan:8005"

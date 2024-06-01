@@ -7,7 +7,7 @@ from front_objects.navigation_admin import make_sidebar
 make_sidebar()
 from PIL import Image
 from io import BytesIO
-from front_objects.product import Product
+from front_objects.classes.product import Product
 
 def show_photo(product_photo_id: str):
     photo_url_dowland = "http://api:8000/files/download/"

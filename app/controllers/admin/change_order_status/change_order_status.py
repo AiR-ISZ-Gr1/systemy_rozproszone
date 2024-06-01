@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from typing import List
-from config import Order
+from config import Order, Cart
 import requests
 
 
@@ -21,14 +21,24 @@ def get_orders(status):
         return [order for order in orders if order.status == status]
 
 
-# get order by id
-@app.get("/orders/{order_id}", response_model=Order)
-def get_order(order_id: int):
-    response = requests.get(f'{api_url}/orders/{order_id}')
+
+# Endpoint do pobierania historii zamówień
+@app.get("/orders/{order_id}")
+async def get_order(order_id: int):
+    response = requests.get(f"{api_url}/orders/{order_id}")
     if response.status_code == 200:
-        return Order(**response.json())
+        order = response.json()
+        products_ids = [
+            item['product_id']
+            for item in requests.get(f"http://api:8000/carts/{order['cart_id']}/items").json()
+        ]
+        order['products'] = [
+            requests.get(f"http://api:8000/products/{id}").json()
+            for id in products_ids                
+        ]
+        return order
     else:
-        raise HTTPException(status_code=404, detail="Order not found")  
+        raise HTTPException(status_code=404, detail="Orders not found")
 
 
 # update order status by id and status
@@ -56,3 +66,24 @@ def delete_order(order_id: int):
     # TODO: To implement
     return None
     
+
+
+# # get cart by id
+# @app.get("/carts/{cart_id}", response_model=Cart)
+# def get_order(cart_id: int):
+#     response = requests.get(f'{api_url}/carts/{cart_id}')
+#     if response.status_code == 200:
+#         return Cart(**response.json())
+#     else:
+#         raise HTTPException(status_code=response.status_code, 
+#                             detail="Cart not found") 
+
+# # get order by id
+# @app.get("/orders/{order_id}", response_model=Order)
+# async def get_order(order_id: int):
+#     response = requests.get(f'{api_url}/orders/{order_id}')
+#     if response.status_code == 200:
+#         return Order(**response.json())
+#     else:
+#         raise HTTPException(status_code=response.status_code,
+#                             detail="Order not found") 

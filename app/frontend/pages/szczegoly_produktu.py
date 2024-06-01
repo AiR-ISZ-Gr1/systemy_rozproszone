@@ -2,7 +2,7 @@ import streamlit as st
 from front_objects.navigation import make_sidebar
 from front_objects.utils import Links
 import requests
-from front_objects.product import Product
+from front_objects.classes.product import Product
 
 
 base_url = "http://api:8000"
