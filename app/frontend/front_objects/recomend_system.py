@@ -26,16 +26,15 @@ class RecomendSystem:
                  
         indeks_produktu = 0
         while indeks_produktu < len(self.produkty):
-            col1, col2, col3, col4 = st.columns(4)
-            for col in [col1, col2, col3, col4]:
+            col1, col2, col3 = st.columns([50,50,50])
+            for col in [col1, col2, col3]:
                 with col:
                     if indeks_produktu < len(self.produkty):
                         produkt = self.produkty[indeks_produktu]
                         if st.button(f' {produkt["nazwa"]} '):
                             st.session_state.selected_product = produkt
                             st.switch_page(Links.PRODUCT_DETAILSC)
-                        # st.image(produkt["zdjecie"], width=60)
-                        st.write(f"**{produkt['nazwa']}**")
+                        st.image(produkt["zdjecie"], width=60)
                         st.write(f"Cena: {produkt['cena']}")
                         indeks_produktu += 1
                         

@@ -4,62 +4,52 @@ from front_objects.utils import Links
 import requests
 from front_objects.classes.product import Product
 
-
 base_url = "http://api:8000"
-
 
 def get_product(product_id: str):
     response = requests.get(f"{base_url}/products/{product_id}")
     return response.json()
 
-
-def wyswietl_szczegoly_produktu():
+def display_product_details():
     product_details = get_product(st.session_state.selected_product_id)
     
-    choosen_product = Product(**product_details)
+    chosen_product = Product(**product_details)
     
-    st.title(choosen_product.name)
+    st.title(chosen_product.name)
     
-    picute = choosen_product.show_photo()
-    if picute:
-        st.image(picute)
+    picture = chosen_product.show_photo()
+    if picture:
+        st.image(picture)
     
-    st.write(f"**Cena:** {choosen_product.sell_price}")
-    st.write(f"**Opis:** {choosen_product.description}")
-    st.subheader("Zakup produktu:")
-    if int(choosen_product.quantity) > 0:
-        ilosc = st.number_input("Wybierz ilość produktu", min_value=1, value=1, max_value=int(choosen_product.quantity))
+    st.write(f"**Price:** {chosen_product.sell_price}")
+    st.write(f"**Description:** {chosen_product.description}")
+    st.subheader("Purchase product:")
+    if int(chosen_product.quantity) > 0:
+        quantity = st.number_input("Select product quantity", min_value=1, value=1, max_value=int(chosen_product.quantity))
     else:
-        st.warning("Produkt niedostępny")
+        st.warning("Product not available")
         
-    if st.button("Dodaj do koszyka"):
+    if st.button("Add to cart"):
         user_id = st.session_state.user_id
         check_cart = requests.get(f"{base_url}/users/{user_id}/cart")
-
         
         if check_cart.status_code == 404:
             create_cart = requests.post(f"{base_url}/users/{user_id}/cart", json={})
-            add_product = requests.post(f"{base_url}/users/{user_id}/cart/items", json={"product_id": choosen_product.id, "quantity": ilosc})
-            
+            add_product = requests.post(f"{base_url}/users/{user_id}/cart/items", json={"product_id": chosen_product.id, "quantity": quantity})
         else:
-            add_product = requests.post(f"{base_url}/users/{user_id}/cart/items", json={"product_id": choosen_product.id, "quantity": ilosc})
+            add_product = requests.post(f"{base_url}/users/{user_id}/cart/items", json={"product_id": chosen_product.id, "quantity": quantity})
             st.write(add_product)
         
-        # czy uzytkownik posiada koszyk
-        # jesli nie to stworz koszyk i dodaj produkt
-        # st.error("Funkcjonalność dodawania produktu do koszyka nie jest jeszcze zaimplementowana")
-        
-    if st.button("Przeglądaj opinie"):
-        st.info("Opinie o produkcie")
-        st.write("1. Bardzo dobry produkt!")
-        st.write("2. Trochę za drogi jak na tę jakość.")
+    if st.button("Browse reviews"):
+        st.info("Product reviews")
+        st.write("1. Very good product!")
+        st.write("2. A bit too expensive for its quality.")
     
-    if st.button("Powrót do wszystkich produktów"):
-            del st.session_state.selected_product_id
-            st.switch_page(Links.ALL_PRODUCTS)
+    if st.button("Back to all products"):
+        del st.session_state.selected_product_id
+        st.switch_page(Links.ALL_PRODUCTS)
 
-    st.write(f"**Category:** {choosen_product.tags}")
-    # st.write(choosen_product.tags)
+    st.write(f"**Category:** {chosen_product.tags}")
 
 make_sidebar()
-wyswietl_szczegoly_produktu()
+display_product_details()

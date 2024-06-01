@@ -32,13 +32,13 @@ class SecretCompanyApp:
     def run(self):
         st.write(
             """
-        # 🛍️ Secret Company
+        # 🌸 Flower shop
         Feel Free, buy everything you want!
         """
         )
 
-        produkty = asyncio.run(self.ask_products())
-        self.wyswietl_kafelki_produktow(produkty)
+        products = asyncio.run(self.ask_products())
+        self.display_product_tiles(products)
 
     @staticmethod
     async def get_all_products():
@@ -49,10 +49,9 @@ class SecretCompanyApp:
                 return [Product(**product) for product in products]
 
     @staticmethod
-    # @st.cache_data
     async def ask_products():
-        produkty = await SecretCompanyApp.get_all_products()
-        return produkty
+        products = await SecretCompanyApp.get_all_products()
+        return products
     
     @staticmethod
     def show_photo(product_photo_id: str):
@@ -64,32 +63,29 @@ class SecretCompanyApp:
             return None
     
     @staticmethod
-    # @st.cache_data
-    def filtrowanie_produktow(produkty, fraza):
-        return [produkt for produkt in produkty if produkt.name.lower().startswith(fraza.lower())]
+    def filter_products(products, phrase):
+        return [product for product in products if product.name.lower().startswith(phrase.lower())]
 
     @staticmethod
-    def wyswietl_kafelki_produktow(produkty):
-        fraza = st.text_input("Filtruj produkty po nazwie:")
-        wyniki_filtrowania = SecretCompanyApp.filtrowanie_produktow(produkty, fraza)
+    def display_product_tiles(products):
+        phrase = st.text_input("Filter products by name:")
+        filter_results = SecretCompanyApp.filter_products(products, phrase)
         
-        indeks_produktu = 0
-        while indeks_produktu < len(wyniki_filtrowania):
+        product_index = 0
+        while product_index < len(filter_results):
             col1, col2, col3, col4 = st.columns(4)
             for col in [col1, col2, col3, col4]:
                 with col:
-                    if indeks_produktu < len(wyniki_filtrowania):
-                        produkt = wyniki_filtrowania[indeks_produktu]
-                        if st.button(produkt.name, key=produkt.id):
-                            st.session_state.selected_product_id = produkt.id
+                    if product_index < len(filter_results):
+                        product = filter_results[product_index]
+                        if st.button(product.name, key=product.id):
+                            st.session_state.selected_product_id = product.id
                             st.switch_page(Links.PRODUCT_DETAILSC)
-                        image = SecretCompanyApp.show_photo(produkt.image_id)
-                        # st.write(produkt.image_id)
+                        image = SecretCompanyApp.show_photo(product.image_id)
                         if image:
                             st.image(image, width=100)
-                        # st.write(f"**{produkt.name}**")
-                        st.write(f"Cena: ${produkt.sell_price:.2f}")
-                        indeks_produktu += 1
+                        st.write(f"Price: ${product.sell_price:.2f}")
+                        product_index += 1
 
 app = SecretCompanyApp()
 app.run()

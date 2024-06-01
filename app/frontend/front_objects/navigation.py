@@ -39,7 +39,7 @@ def make_sidebar():
                             logout()
             
             
-            st.write("Recommendations:")
+            st.write("*Recommendations*")
             
             recomendations = RecomendSystem()
             recomendations.run()

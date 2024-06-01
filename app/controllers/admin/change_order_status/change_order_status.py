@@ -28,13 +28,17 @@ async def get_order(order_id: int):
     response = requests.get(f"{api_url}/orders/{order_id}")
     if response.status_code == 200:
         order = response.json()
-        products_ids = [
-            item['product_id']
+        products = [
+            item
             for item in requests.get(f"{api_url}/carts/{order['cart_id']}/items").json()
         ]
+        # products_quantitis = [
+        #     item['product_quantity']
+        #     for item in requests.get(f"{api_url}/carts/{order['cart_id']}/items").json()
+        # ]
         order['products'] = [
-            requests.get(f"{api_url}/products/{id}").json()
-            for id in products_ids                
+            requests.get(f"{api_url}/products/{item['id']}").json() | item
+            for item in products                
         ]
         return order
     else:

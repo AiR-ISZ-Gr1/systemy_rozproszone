@@ -11,23 +11,21 @@ def change_quantity(item_id, quantity, product_id):
     requests.delete(f"{base_url}/users/{st.session_state.user_id}/cart/items/{item_id}")
     if quantity > 0:
         requests.post(f"{base_url}/users/{st.session_state.user_id}/cart/items", 
-                    json={"product_id": product_id, "quantity": quantity})
+                      json={"product_id": product_id, "quantity": quantity})
     st.experimental_rerun()
 
-st.write("# 🛒 KOSZYK ZAMÓWIEŃ")
+st.write("# 🛒 Shopping Cart")
 
 get_items_in_cart = requests.get(f"{base_url}/users/{st.session_state.user_id}/cart/items").json()
 
-
 if type(get_items_in_cart) == list and len(get_items_in_cart) > 0:
     # Headers for the table
-    
     col1, col2, col3, col4, col5 = st.columns([2, 1, 1, 1, 2])
 
-    col1.subheader("Nazwa produktu")
-    col2.subheader("Cena za sztukę")
-    col3.subheader("Ilość")
-    col4.subheader("Podsumowanie")
+    col1.subheader("Product Name")
+    col2.subheader("Price per Unit")
+    col3.subheader("Quantity")
+    col4.subheader("Total")
     col5.subheader("")
 
     total_cost = 0
@@ -53,19 +51,19 @@ if type(get_items_in_cart) == list and len(get_items_in_cart) > 0:
         with col1:
             st.write(f"{item_name}")
         with col2:
-            st.write(f"{item_price} $/szt.")
+            st.write(f"${item_price} /unit")
         with col3:
             new_quantity = st.number_input("", min_value=0, max_value=actual_quantity, value=chosen_quantity, step=1, key=f"quantity_{item_id}")
         with col4:
-            st.write(f"{item_total_cost:.2f} $")
+            st.write(f"${item_total_cost:.2f}")
         with col5:
             if new_quantity != chosen_quantity:
-                if st.button("Aktualizuj", key=f"update_{item_id}"):
+                if st.button("Update", key=f"update_{item_id}"):
                     change_quantity(item_id, new_quantity, product_id)
 
-    st.write(f"**Całkowity koszt:** {total_cost:.2f} $")
+    st.write(f"**Total Cost:** ${total_cost:.2f}")
 
-    if st.button("Podsumuj zamówienie"):
+    if st.button("Checkout"):
         st.switch_page(Links.SEND_PAGE)
 else:
-    st.write("Twój koszyk jest pusty.")
+    st.write("Your cart is empty.")
