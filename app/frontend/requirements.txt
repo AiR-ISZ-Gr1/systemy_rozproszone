@@ -7,4 +7,4 @@ openai
 pillow
 python-io
 fastapi
-
+sqlmodel

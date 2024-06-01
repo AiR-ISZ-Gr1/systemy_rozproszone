@@ -5,7 +5,6 @@ from front_objects.product import Product
 
 make_sidebar()
 api_url = "http://magazyn_stan:8005"
-a_url = "http://api:8000"
 
 # returns products with quantity up to threshold
 def get_low_stock_products(threshold: int = 50):

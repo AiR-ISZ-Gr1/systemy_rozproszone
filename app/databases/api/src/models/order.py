@@ -2,10 +2,11 @@ from sqlmodel import SQLModel, Field
 from enum import Enum
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Optional
 
 
 class Order(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
+    id: Optional[int] = Field(default=None, primary_key=True)
     cart_id: int = Field(foreign_key="cart.id")
     user_id: int = Field(foreign_key="user.id")
     address_id: int = Field(foreign_key="address.id")
