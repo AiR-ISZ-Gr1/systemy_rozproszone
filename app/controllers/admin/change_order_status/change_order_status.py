@@ -2,26 +2,17 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List
 from datetime import datetime
+from config import Order
+import requests
 
 app = FastAPI()
+api_url = "http://api:8000"
 
-class Order(BaseModel):
-    order_id: int
-    order_date: datetime
-    customer_id: int
-    status: str
-
-# Przykładowe zamówienia
-orders = [
-    Order(order_id=1, order_date=datetime.now(), customer_id=101, status="new"),
-    Order(order_id=2, order_date=datetime.now(), customer_id=102, status="new"),
-    Order(order_id=3, order_date=datetime.now(), customer_id=103, status="new"),
-    Order(order_id=4, order_date=datetime.now(), customer_id=104, status="new")
-]
 
 @app.get("/orders", response_model=List[Order])
 def get_orders():
-    return orders
+    response = requests.get(f'{api_url}/orders')
+    return [Order(**order) for order in response.json()]
 
 @app.get("/orders/{order_id}", response_model=Order)
 def get_order(order_id: int):

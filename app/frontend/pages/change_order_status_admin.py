@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 import datetime
 from front_objects.navigation_admin import make_sidebar
+from front_objects.order import Order
 make_sidebar()
 
 API_URL = "http://change_order_status:8004"
@@ -13,7 +14,7 @@ def fetch_orders(status=None):
     else:
         response = requests.get(f"{API_URL}/orders")
     if response.status_code == 200:
-        return response.json()
+        return [Order(**order) for order in response.json()]
     else:
         return []
 
@@ -64,4 +65,4 @@ st.write(f"Displaying {len(orders)} orders with status {status_filter}")
 
 # Display orders succinctly
 for order in orders:
-    st.write(f"Order ID: {order['order_id']}, Status: {order['status']}")
+    st.write(f"Order ID: {order.id}, Status: {order.status}")

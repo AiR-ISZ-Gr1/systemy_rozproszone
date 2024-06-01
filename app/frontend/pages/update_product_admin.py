@@ -62,10 +62,16 @@ if selected_product_name is not None:
                 buy_price=buy_price,
                 tags=tags
             )
-            response = requests.get(f'{api_url}/products/name/{updated_product.name}')
-            if response.status_code == 200:
-                st.error('Taka nazwa produktu już istnieje!')
-            else:
+
+            # check for name duplicates
+            name_check = True
+            if selected_product['name'] != updated_product.name:
+                response = requests.get(f'{api_url}/products/name/{updated_product.name}')
+                if response.status_code == 200:
+                    name_check = False
+                    st.error('This product name is already occupied!')
+            
+            if name_check:
                 if image is None:
                     image_id = selected_product["image_id"]
                 else:

@@ -5,6 +5,7 @@ from typing import List
 import requests
 from io import BytesIO
 from PIL import Image
+from typing import Optional
 
 
 image_download_url = "http://api:8000/files/download/"
@@ -19,7 +20,7 @@ class Product(BaseModel):
     quantity: int = 0
     buy_price: float = 0
     date: str = Field(default_factory=lambda: datetime.now().strftime("%d-%m-%Y %H:%M:%S"))
-    image_id: str | None = None
+    image_id: Optional[str] = None
     tags: List[str] = Field(default_factory=list)
     
     def show_photo(self):
