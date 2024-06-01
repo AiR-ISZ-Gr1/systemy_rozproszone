@@ -74,3 +74,5 @@ Pillow
 python-io
 requests
 fastapi
+sentence-transformers==3.0.0
+
