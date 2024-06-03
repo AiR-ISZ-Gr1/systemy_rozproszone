@@ -56,10 +56,10 @@ async def submit_order(order: Order):
     address_id = response['id']
 
     response = requests.post(f"http://api:8000/users/{order.user_id}").json()
-    
+
     if 'cart_id' not in response:
         response = requests.post(
-        f"http://api:8000/users/{order.user_id}/cart", json={}).json()
+            f"http://api:8000/users/{order.user_id}/cart", json={}).json()
         cart_id = response['id']
     else:
         cart_id = response['cart_id']
@@ -67,15 +67,15 @@ async def submit_order(order: Order):
     items = requests.get(
         f"http://api:8000/carts/{cart_id}/items").json()
 
-    items_data = [
+    products = [
         requests.get(f"http://api:8000/products/{item['product_id']}").json()
         for item in items
     ]
 
     missing_quantity = [
-        data['name']
-        for item, data in zip(items, items_data)
-        if item['quantity'] > data['quantity']
+        product['name']
+        for item, product in zip(items, products)
+        if item['quantity'] > product['quantity']
     ]
 
     if missing_quantity:
@@ -84,15 +84,18 @@ async def submit_order(order: Order):
             content=f"The following products are missing: {missing_quantity}"
         )
 
+    total_amount = sum(item['quantity'] * product['price']
+                       for item, product in zip(items, products))
+
     dborder = OrderDb(
         status="placed",
-        total_amount=420.0,
+        total_amount=total_amount,
         address_id=address_id,
         user_id=order.user_id,
         cart_id=cart_id,
     )
     response = requests.post("http://api:8000/orders",
-                            json=dborder.model_dump()).json()
+                             json=dborder.model_dump()).json()
 
     # duplicate of
     # response = requests.post(
