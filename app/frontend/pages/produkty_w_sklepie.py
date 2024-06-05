@@ -24,6 +24,7 @@ class Product(BaseModel):
     date: str = Field(default_factory=lambda: datetime.now().strftime("%d-%m-%Y %H:%M:%S"))
     image_id: str | None = None
     tags: List[str] = Field(default_factory=list)
+    is_enabled: bool = True
     
 class SecretCompanyApp:
     def __init__(self):
@@ -46,7 +47,7 @@ class SecretCompanyApp:
         async with aiohttp.ClientSession() as session:
             async with session.get(f"{base_url}/products/") as response:
                 products = await response.json()
-                return [Product(**product) for product in products]
+                return [Product(**product) for product in products if product['is_enabled']]
 
     @staticmethod
     async def ask_products():

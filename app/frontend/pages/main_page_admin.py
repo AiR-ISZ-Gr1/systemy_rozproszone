@@ -12,6 +12,30 @@ from front_objects.navigation_admin import make_sidebar
 from front_objects.classes.product import Product
 make_sidebar()
 
+api_callback='http://api:8000'
+
+def restore_product(product: Product):
+    product.is_enabled = True
+    response = requests.put(f"{api_callback}/products/{product.id}", json=product.dict())
+    if response.status_code == 200:
+        st.success("Product restored!")
+
+st.write("### Restore Product")
+
+
+name = st.text_input('Product name')
+with st.expander("Restore Product"):
+    response = requests.get(f'{api_callback}/products/name/{name}')
+    if response.status_code == 200:
+        st.write(f"Are you sure you want to restore {name} product?")
+        if st.button(f"Yes, restore {name}"):
+            restore_product(Product(**response.json()))
+        st.button("No")
+    else:
+        st.error("No product of this name in database history!")
+
+
+
 
 st.title('Add new Product')
 
@@ -26,7 +50,9 @@ tags = st.multiselect(
     ["Flower"])
 image = st.file_uploader('Photo of the product', type=['jpg', 'jpeg', 'png'])
 
-api_callback='http://api:8000'
+
+
+
 
 if st.button('Dodaj produkt'):
     if name and description and sell_price and quantity and buy_price and tags and image:

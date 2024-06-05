@@ -25,6 +25,7 @@ class Product(BaseModel):
     date: str = Field(default_factory=lambda: datetime.now().strftime("%d-%m-%Y %H:%M:%S"))
     image_id: str | None = None
     tags: List[str] = Field(default_factory=list)
+    is_enabled: bool = True
     
     def show_photo(self):
         response = requests.get(f"{image_download_url}{self.image_id}", stream=True)
@@ -97,7 +98,8 @@ def main():
         quantity= item['Quantities'],
         buy_price= item['Buy_price'],
         date= 'None',
-        tags= [item['tags']]
+        tags= [item['tags']],
+        is_enabled= True
         )
         response = requests.get(f'http://api:8000/products/name/{product.name}')
         if response.status_code == 200:

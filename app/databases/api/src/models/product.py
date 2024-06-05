@@ -21,6 +21,8 @@ class Product(BaseModel):
     date: str = Field(default_factory=lambda: datetime.now().strftime("%d-%m-%Y %H:%M:%S"))
     image_id: str | None = None
     tags: List[str] = Field(default_factory=list)
+    is_enabled: bool = True
+    
    
 def add_product_image(file: UploadFile, product: Product):
     img = compress_image(Image.open(file.file))
