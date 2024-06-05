@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from typing import List
-from config import Order, Cart
+from config import Order, Cart, OrderStatus
 import requests
 
 
@@ -47,9 +47,9 @@ async def get_order(order_id: int):
 
 # update order status by id and status
 @app.put("/orders/{order_id}", response_model=Order)
-def update_order(order_id: int, status: str):
+def update_order(order_id: int, status: OrderStatus):
     order = get_order(order_id)
-    order.status = status
+    order['status'] = status
     response = requests.put(f"{api_url}/orders/{order_id}", json=order.dict())
     if response.status_code == 200:
         return response.json()

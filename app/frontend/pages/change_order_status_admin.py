@@ -29,23 +29,21 @@ def fetch_order_by_id(order_id: int) -> Optional[Order]:
         return Order(**response.json())
     else:
         return None
-    
-    # if response.status_code == 200:
-    #     # order = Order(**response.json())
-    #     return response.json()
-    #     # response = requests.get(f'{API_URL}/carts/{order.cart_id}')
-    #     # if response.status_code == 200:
-    #     #     cart = Cart(**response.json())
-    #     #     return order, cart
-    #     # else:
-    #     #     return None, None
-    # else:
-    #     return response
 
-def update_order_status(order_id, status):
-    response = requests.put(f"{API_URL}/orders/{order_id}", params={"status": status})
+
+def update_order_status(order_id: int, status: OrderStatus):
+    url = "http://api:8000"
+    order = fetch_order_by_id(order_id)
+    order.status = status
+    response = requests.put(f"{url}/orders/{order_id}", json=order.dict())
     return response.status_code == 200
 
+# def update_order_status(order_id: int, status: OrderStatus):
+#     url = "http://api:8000"
+#     order = fetch_order_by_id(order_id)
+#     order.status = status
+#     response = requests.put(f"{url}/orders/{order_id}", params={"status": status})
+#     return response.status_code == 200
 st.title("Order Management System")
 
 search_id = st.text_input("Enter Order ID to search")
