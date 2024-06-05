@@ -51,6 +51,7 @@ if selected_product_name is not None:
                 delete_product(selected_product)
             if st.button("No"):
                 st.rerun()
+
         
 
         st.write("### Edit Product")
