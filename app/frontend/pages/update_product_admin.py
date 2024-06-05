@@ -45,12 +45,12 @@ if selected_product_name is not None:
         selected_product = Product(**response.json())
 
         st.write("### Delete Product")
-
-        if st.button("Delete Product"):
-            st.write("Are you sure you want to delete this product?")
+        with st.expander("Delete Product"):
+            st.write(f"Are you sure you want to delete this product?")
             if st.button(f"Yes, delete {selected_product_name}"):
                 delete_product(selected_product)
-            st.button("No")
+            if st.button("No"):
+                st.rerun()
         
 
         st.write("### Edit Product")

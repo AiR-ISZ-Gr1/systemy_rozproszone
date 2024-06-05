@@ -47,7 +47,7 @@ class SecretCompanyApp:
         async with aiohttp.ClientSession() as session:
             async with session.get(f"{base_url}/products/") as response:
                 products = await response.json()
-                return [Product(**product) for product in products]
+                return [Product(**product) for product in products if product['is_enabled']]
 
     @staticmethod
     async def ask_products():

@@ -22,34 +22,14 @@ def restore_product(product: Product):
 
 st.write("### Restore Product")
 
-if "restore" not in st.session_state:
-    st.session_state["restore"] = False
-if "yes" not in st.session_state:
-    st.session_state["yes"] = False
-if "no" not in st.session_state:
-    st.session_state["no"] = False
-
-# if st.button("Button1"):
-#     st.session_state["button1"] = not st.session_state["button1"]
 
 name = st.text_input('Product name')
-if st.button("Restore Product"):
-    # if st.session_state['restore'] == False:
-    st.session_state['flower_name'] = name
-    st.session_state["restore"] = True
+with st.expander("Restore Product"):
     response = requests.get(f'{api_callback}/products/name/{name}')
     if response.status_code == 200:
-        # product = Product(**response.json())
-        st.write(f"Are you sure you want to restore {st.session_state['flower_name']} product?")
-        if st.button(f"Yes, restore {st.session_state['flower_name']}"):
-            st.session_state["yes"] = True
-            if st.session_state['restore'] and st.session_state['yes']:
-                response = requests.get(f'{api_callback}/products/name/{st.session_state["flower_name"]}')
-                restore_product(Product(**response.json()))
-                st.session_state['restore'] = False
-                st.session_state['yes'] = False
-            
-            # st.write('hój')
+        st.write(f"Are you sure you want to restore {name} product?")
+        if st.button(f"Yes, restore {name}"):
+            restore_product(Product(**response.json()))
         st.button("No")
     else:
         st.error("No product of this name in database history!")
