@@ -12,6 +12,50 @@ from front_objects.navigation_admin import make_sidebar
 from front_objects.classes.product import Product
 make_sidebar()
 
+api_callback='http://api:8000'
+
+def restore_product(product: Product):
+    product.is_enabled = True
+    response = requests.put(f"{api_callback}/products/{product.id}", json=product.dict())
+    if response.status_code == 200:
+        st.success("Product restored!")
+
+st.write("### Restore Product")
+
+if "restore" not in st.session_state:
+    st.session_state["restore"] = False
+if "yes" not in st.session_state:
+    st.session_state["yes"] = False
+if "no" not in st.session_state:
+    st.session_state["no"] = False
+
+# if st.button("Button1"):
+#     st.session_state["button1"] = not st.session_state["button1"]
+
+name = st.text_input('Product name')
+if st.button("Restore Product"):
+    # if st.session_state['restore'] == False:
+    st.session_state['flower_name'] = name
+    st.session_state["restore"] = True
+    response = requests.get(f'{api_callback}/products/name/{name}')
+    if response.status_code == 200:
+        # product = Product(**response.json())
+        st.write(f"Are you sure you want to restore {st.session_state['flower_name']} product?")
+        if st.button(f"Yes, restore {st.session_state['flower_name']}"):
+            st.session_state["yes"] = True
+            if st.session_state['restore'] and st.session_state['yes']:
+                response = requests.get(f'{api_callback}/products/name/{st.session_state["flower_name"]}')
+                restore_product(Product(**response.json()))
+                st.session_state['restore'] = False
+                st.session_state['yes'] = False
+            
+            # st.write('hój')
+        st.button("No")
+    else:
+        st.error("No product of this name in database history!")
+
+
+
 
 st.title('Add new Product')
 
@@ -26,7 +70,9 @@ tags = st.multiselect(
     ["Flower"])
 image = st.file_uploader('Photo of the product', type=['jpg', 'jpeg', 'png'])
 
-api_callback='http://api:8000'
+
+
+
 
 if st.button('Dodaj produkt'):
     if name and description and sell_price and quantity and buy_price and tags and image:

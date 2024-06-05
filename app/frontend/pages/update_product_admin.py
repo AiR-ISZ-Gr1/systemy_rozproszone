@@ -18,8 +18,9 @@ def show_photo(product_photo_id: str):
     else:
         return None
 
-def delete_product(product_id: str):
-    response = requests.put(f"{api_url}/products/{product_id}", json=updated_product.dict())
+def delete_product(selected_product: Product):
+    selected_product.is_enabled = False
+    response = requests.put(f"{api_url}/products/{selected_product.id}", json=selected_product.dict())
 
 
 api_url = "http://api:8000"
@@ -31,7 +32,7 @@ st.title("Shop Management System")
 response = requests.get(f"{api_url}/products")
 products = response.json()
 
-joined_list = {product["name"]: product["id"] for product in products}
+joined_list = {product["name"]: product["id"] for product in products if product["is_enabled"]}
 
 
 selected_product_name = st.selectbox("Choosen product", joined_list, index=None, placeholder="Select a product to edit")
@@ -41,25 +42,26 @@ if selected_product_name is not None:
     selected_product_id = joined_list[selected_product_name]
     if selected_product_id:
         response = requests.get(f"{api_url}/products/{selected_product_id}")
-        selected_product = response.json()
+        selected_product = Product(**response.json())
 
         st.write("### Delete Product")
 
         if st.button("Delete Product"):
             st.write("Are you sure you want to delete this product?")
-            st.button(f"Yes, delete {selected_product_name}", on_click=delete_product(selected_product_id))
+            if st.button(f"Yes, delete {selected_product_name}"):
+                delete_product(selected_product)
             st.button("No")
         
 
         st.write("### Edit Product")
         
-        name = st.text_input("Name", selected_product["name"])
-        description = st.text_area("Description", selected_product["description"])
-        sell_price = st.number_input("Sell price", value=selected_product["sell_price"])
-        quantity = st.number_input("Quantity", value=selected_product["quantity"])
-        buy_price = st.number_input("Buy price", value=selected_product["buy_price"])
-        tags = st.multiselect("Categories", ["Flower", "flower", "Tree", "Object", "Other", "Manure"], selected_product["tags"])
-        image_show = show_photo(selected_product["image_id"])
+        name = st.text_input("Name", selected_product.name)
+        description = st.text_area("Description", selected_product.description)
+        sell_price = st.number_input("Sell price", value=selected_product.sell_price)
+        quantity = st.number_input("Quantity", value=selected_product.quantity)
+        buy_price = st.number_input("Buy price", value=selected_product.buy_price)
+        tags = st.multiselect("Categories", ["Flower", "flower", "Tree", "Object", "Other", "Manure"], selected_product.tags)
+        image_show = show_photo(selected_product.image_id)
         if image_show:
             st.image(image_show)
         image = st.file_uploader("Image", type=['jpg', 'jpeg', 'png', 'JPG', 'JPEG', 'PNG'])
@@ -76,7 +78,7 @@ if selected_product_name is not None:
 
             # check for name duplicates
             name_check = True
-            if selected_product['name'] != updated_product.name:
+            if selected_product.name != updated_product.name:
                 response = requests.get(f'{api_url}/products/name/{updated_product.name}')
                 if response.status_code == 200:
                     name_check = False
@@ -84,7 +86,7 @@ if selected_product_name is not None:
             
             if name_check:
                 if image is None:
-                    image_id = selected_product["image_id"]
+                    image_id = selected_product.image_id
                 else:
                     updated_product.add_product_image(image)
                     
