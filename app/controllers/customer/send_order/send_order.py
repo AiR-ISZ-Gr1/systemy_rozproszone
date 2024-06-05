@@ -109,7 +109,7 @@ async def submit_order(order: Order):
                        for item, product in zip(items, products))
 
     dborder = OrderDb(
-        status="placed",
+        status=OrderStatus.PENDING,
         total_amount=total_amount,
         address_id=address_id,
         user_id=order.user_id,

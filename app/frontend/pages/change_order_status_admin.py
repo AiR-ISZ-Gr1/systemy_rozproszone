@@ -50,7 +50,7 @@ search_id = st.text_input("Enter Order ID to search")
 
 if search_id:
     order = fetch_order_by_id(search_id)
-    st.write(order)
+    # st.write(order)r
     if order:
         st.write(f"Order ID: {order.id}")
         st.write(f"Order Date: {order.date}")
@@ -73,13 +73,15 @@ st.header("All Orders")
 
 status_filter = st.selectbox("Filter by Status", [status.value for status in OrderStatus] + ['all'])
 
-if status_filter == "all":
-    orders = fetch_orders()
-else:
-    orders = fetch_orders(status=status_filter)
+# if status_filter == "all":
+orders = fetch_orders()
+# else:
+#     orders = fetch_orders(status=status_filter)
 
-st.write(f"Displaying {len(orders)} orders with status {status_filter}")
+# st.write(f"Displaying {len(orders)} orders with status {status_filter}")
+st.write(f"Displaying orders with status {status_filter}")
 
 # Display orders succinctly
 for order in orders:
-    st.write(f"Order ID: {order.id}, Status: {order.status.value}")
+    if order.status.value == status_filter or status_filter == 'all':
+        st.write(f"Order ID: {order.id}, Status: {order.status.value}")
