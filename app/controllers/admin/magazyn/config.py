@@ -13,3 +13,4 @@ class Product(BaseModel):
     date: str = Field(default_factory=lambda: datetime.now().strftime("%d-%m-%Y %H:%M:%S"))
     image_id: Optional[str] = None
     tags: List[str] = Field(default_factory=list)
+    is_enabled: bool = True

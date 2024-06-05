@@ -17,8 +17,9 @@ class Product(BaseModel):
     quantity: int = 0
     buy_price: float = 0
     date: str
-    image_id: str
-
+    image_id: Optional[str] = None
+    tags: List[str] = Field(default_factory=list)
+    is_enabled: bool = True
 
 @app.get("/products", response_model=List[Product])
 async def get_products():
