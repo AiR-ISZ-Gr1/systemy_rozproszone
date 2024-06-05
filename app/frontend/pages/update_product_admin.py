@@ -18,6 +18,9 @@ def show_photo(product_photo_id: str):
     else:
         return None
 
+def delete_product(product_id: str):
+    response = requests.put(f"{api_url}/products/{product_id}", json=updated_product.dict())
+
 
 api_url = "http://api:8000"
 photo_url = "http://api:8000/files/upload"
@@ -40,6 +43,14 @@ if selected_product_name is not None:
         response = requests.get(f"{api_url}/products/{selected_product_id}")
         selected_product = response.json()
 
+        st.write("### Delete Product")
+
+        if st.button("Delete Product"):
+            st.write("Are you sure you want to delete this product?")
+            st.button(f"Yes, delete {selected_product_name}", on_click=delete_product(selected_product_id))
+            st.button("No")
+        
+
         st.write("### Edit Product")
         
         name = st.text_input("Name", selected_product["name"])
@@ -47,7 +58,7 @@ if selected_product_name is not None:
         sell_price = st.number_input("Sell price", value=selected_product["sell_price"])
         quantity = st.number_input("Quantity", value=selected_product["quantity"])
         buy_price = st.number_input("Buy price", value=selected_product["buy_price"])
-        tags = st.multiselect("Categories", ["Flower", "Tree", "Object", "Other", "Manure"], selected_product["tags"])
+        tags = st.multiselect("Categories", ["Flower", "flower", "Tree", "Object", "Other", "Manure"], selected_product["tags"])
         image_show = show_photo(selected_product["image_id"])
         if image_show:
             st.image(image_show)
