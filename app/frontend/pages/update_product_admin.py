@@ -47,7 +47,7 @@ if selected_product_name is not None:
 
         if st.button("Delete Product"):
             st.write("Are you sure you want to delete this product?")
-            st.button(f"Yes, delete {selected_product_name}", on_click=delete_product(selected_product_id))
+            st.button(f"Yes, delete {selected_product_name}") #, on_click=delete_product(selected_product_id))
             st.button("No")
         
 
