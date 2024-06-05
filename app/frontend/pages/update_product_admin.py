@@ -55,7 +55,7 @@ if selected_product_name is not None:
         
 
         st.write("### Edit Product")
-        
+
         name = st.text_input("Name", selected_product.name)
         description = st.text_area("Description", selected_product.description)
         sell_price = st.number_input("Sell price", value=selected_product.sell_price)
@@ -66,7 +66,7 @@ if selected_product_name is not None:
         if image_show:
             st.image(image_show)
         image = st.file_uploader("Image", type=['jpg', 'jpeg', 'png', 'JPG', 'JPEG', 'PNG'])
-        
+
         if st.button("Update Product"):
             updated_product = Product(
                 name=name,
@@ -87,7 +87,7 @@ if selected_product_name is not None:
             
             if name_check:
                 if image is None:
-                    image_id = selected_product.image_id
+                    updated_product.image_id = selected_product.image_id
                 else:
                     updated_product.add_product_image(image)
                     
