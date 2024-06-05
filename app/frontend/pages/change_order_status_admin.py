@@ -2,8 +2,9 @@ import streamlit as st
 import requests
 import datetime
 from front_objects.navigation_admin import make_sidebar
-from front_objects.classes.order import Order
+from front_objects.classes.order import Order, OrderStatus
 from front_objects.classes.cart import Cart
+from typing import Optional
 make_sidebar()
 
 API_URL = "http://change_order_status:8004"
@@ -22,9 +23,13 @@ def fetch_orders(status='all'):
 #     else:
 #         return None
 
-def fetch_order_by_id(order_id):
+def fetch_order_by_id(order_id: int) -> Optional[Order]:
     response = requests.get(f"{API_URL}/orders/{order_id}")
-    return response.json()
+    if response.status_code == 200:
+        return Order(**response.json())
+    else:
+        return None
+    
     # if response.status_code == 200:
     #     # order = Order(**response.json())
     #     return response.json()
@@ -52,10 +57,10 @@ if search_id:
         st.write(f"Order ID: {order.id}")
         st.write(f"Order Date: {order.date}")
         st.write(f"Customer ID: {order.user_id}")
-        st.write(f"df {order.items}")
-        st.write(f"Status: {order.status}")
+        # st.write(f"df {order.items}")
+        st.write(f"Status: {order.status.value}")
         
-        new_status = st.selectbox("Change Status", ["cancelled", "ready to ship", "shipped"], key=order.id)
+        new_status = st.selectbox("Change Status", [status.value for status in OrderStatus], key=order.id)
         if st.button("Update Status", key=f"update_{order.id}"):
             if update_order_status(order.id, new_status):
                 st.success(f"Order {order.id} status updated to {new_status}")
@@ -68,7 +73,7 @@ if search_id:
 st.write("---")
 st.header("All Orders")
 
-status_filter = st.selectbox("Filter by Status", ["all", "new", "cancelled", "ready to ship", "shipped"])
+status_filter = st.selectbox("Filter by Status", [status.value for status in OrderStatus] + ['all'])
 
 if status_filter == "all":
     orders = fetch_orders()
@@ -79,4 +84,4 @@ st.write(f"Displaying {len(orders)} orders with status {status_filter}")
 
 # Display orders succinctly
 for order in orders:
-    st.write(f"Order ID: {order.id}, Status: {order.status}")
+    st.write(f"Order ID: {order.id}, Status: {order.status.value}")
