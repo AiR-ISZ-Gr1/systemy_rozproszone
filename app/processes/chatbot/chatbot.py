@@ -21,5 +21,5 @@ async def answer(question: str):
 @app.get("/ask/names/{question}")
 async def get_names(question: str):
     flowers = [flower.get('Name') for flower in await filler.get_names(question)]
-    print(f'flowers::  {flowers}\n')
+    print(f'flowers:  {flowers}\n')
     return flowers

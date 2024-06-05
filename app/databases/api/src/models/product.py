@@ -13,8 +13,8 @@ image_download_url = "http://api:8000/files/download/"
 
 class Product(BaseModel):
     id: str = Field(default_factory=lambda: nanoid.generate(size=10))
-    name: str
-    description: str = "default description"
+    name: str = ''
+    description: str = ''
     sell_price: float = 0
     quantity: int = 0
     buy_price: float = 0
@@ -22,7 +22,12 @@ class Product(BaseModel):
     image_id: str | None = None
     tags: List[str] = Field(default_factory=list)
     is_enabled: bool = True
-    
+
+class VecProduct(BaseModel):
+    id: str = ''
+    name: str = ''
+    description: str = ''
+    is_enabled: bool = True
    
 def add_product_image(file: UploadFile, product: Product):
     img = compress_image(Image.open(file.file))
