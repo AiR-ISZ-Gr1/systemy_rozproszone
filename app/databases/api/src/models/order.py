@@ -37,11 +37,9 @@ class Order(SQLModel, table=True):
     status: str
     total_amount: float
 
-
 # class OrderStatus(str, Enum):
 #     PLACED = "placed"
 #     DONE = "done"
-
 
 class OrderUpdate(BaseModel):
     cart_id: Optional[int] = None
