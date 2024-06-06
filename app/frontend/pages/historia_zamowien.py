@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 from front_objects.navigation import make_sidebar
 from front_objects.utils import Links
+from front_objects.classes.order import OrderStatus
 
 make_sidebar()
 
@@ -34,7 +35,7 @@ def display_order_details(order):
         </div>
         """, unsafe_allow_html=True)
 
-        if order['status'] == "delivered" and not product.get('review'):
+        if (order['status'] == OrderStatus.DELIVERED.value or order['status'] == OrderStatus.RETURNED.value) and not product.get('review'):
             with st.expander(f"Add review for {product['name']}"):
                 review_text = st.text_area(
                     "Your review", key=f"review_text_{order['id']}_{product['name']}")

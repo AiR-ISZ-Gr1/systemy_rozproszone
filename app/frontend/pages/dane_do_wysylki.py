@@ -69,4 +69,5 @@ if submitted:
             st.write(f"Email: {email}")
             st.write(f"Chosen Payment Method: {payment_method}")
         else:
+            st.write(response)
             st.error("There was an error placing your order. Please try again.")

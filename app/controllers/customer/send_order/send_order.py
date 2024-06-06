@@ -5,9 +5,30 @@ from datetime import datetime
 import requests
 import logging
 from typing import Optional, List
+from enum import Enum
 
 app = FastAPI()
 
+class OrderStatus(Enum):
+    """
+    Enumeration for representing all statuses an order can have.
+
+    Attributes:
+        PENDING (str): Order has been created but not processed.
+        PROCESSING (str): Order is being processed.
+        PACKAGING (str): Order is being packaged.
+        SHIPPED (str): Order has been shipped.
+        DELIVERED (str): Order has been delivered.
+        CANCELLED (str): Order has been cancelled.
+        RETURNED (str): Order has been returned.
+    """
+    PENDING = "pending"
+    PROCESSING = "processing"
+    PACKAGING = "packaging"
+    SHIPPED = "shipped"
+    DELIVERED = "delivered"
+    CANCELLED = "cancelled"
+    RETURNED = "returned"
 
 class OrderDb(BaseModel):
     cart_id: int
@@ -42,7 +63,6 @@ class Order(BaseModel):
     payment_method: str
     user_id: int
 
-
 @app.post("/submit_order/")
 async def submit_order(order: Order):
     address = Address(
@@ -56,7 +76,6 @@ async def submit_order(order: Order):
     address_id = response['id']
 
     response = requests.post(f"http://api:8000/users/{order.user_id}").json()
-
     if 'cart_id' not in response:
         response = requests.post(
             f"http://api:8000/users/{order.user_id}/cart", json={}).json()
@@ -66,7 +85,6 @@ async def submit_order(order: Order):
 
     items = requests.get(
         f"http://api:8000/carts/{cart_id}/items").json()
-
     products = [
         requests.get(f"http://api:8000/products/{item['product_id']}").json()
         for item in items
@@ -86,20 +104,18 @@ async def submit_order(order: Order):
 
     total_amount = sum(item['quantity'] * product['price']
                        for item, product in zip(items, products))
-
+    check = OrderStatus.PENDING.value
     dborder = OrderDb(
-        status="placed",
+        status=check,
         total_amount=total_amount,
         address_id=address_id,
         user_id=order.user_id,
         cart_id=cart_id,
     )
+    print(dborder.model_dump())
     response = requests.post("http://api:8000/orders",
-                             json=dborder.model_dump()).json()
-
-    # duplicate of
-    # response = requests.post(
-    #     f"http://api:8000/users/{order.user_id}/cart", json={}).json()
+                             json=dborder.model_dump())
+    
 
     return dict(message="OK")
 

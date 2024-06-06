@@ -2,6 +2,29 @@ from sqlmodel import SQLModel, Field, Relationship
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional, List
+from enum import Enum
+
+
+class OrderStatus(Enum):
+    """
+    Enumeration for representing all statuses an order can have.
+
+    Attributes:
+        PENDING (str): Order has been created but not processed.
+        PROCESSING (str): Order is being processed.
+        PACKAGING (str): Order is being packaged.
+        SHIPPED (str): Order has been shipped.
+        DELIVERED (str): Order has been delivered.
+        CANCELLED (str): Order has been cancelled.
+        RETURNED (str): Order has been returned.
+    """
+    PENDING = "pending"
+    PROCESSING = "processing"
+    PACKAGING = "packaging"
+    SHIPPED = "shipped"
+    DELIVERED = "delivered"
+    CANCELLED = "cancelled"
+    RETURNED = "returned"
 
 
 class Order(SQLModel, table=False):
