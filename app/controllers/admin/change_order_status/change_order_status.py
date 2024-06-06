@@ -10,15 +10,15 @@ api_url = "http://api:8000"
 
 # get all orders with given status
 @app.get("/orders", response_model=List[Order])
-def get_orders(status):
+def get_orders(order_status: str):
     response = requests.get(f'{api_url}/orders')
     if not response.status_code == 200:
         raise HTTPException(status_code=response.status_code, detail='ERROR')
     orders = [Order(**order) for order in response.json()]
-    if status == 'all':
+    if order_status == 'all':
         return [order for order in orders]
     else:
-        return [order for order in orders if order.status == status]
+        return [order for order in orders if order.status == order_status]
 
 
 
@@ -47,9 +47,9 @@ async def get_order(order_id: int):
 
 # update order status by id and status
 @app.put("/orders/{order_id}", response_model=Order)
-def update_order(order_id: int, status: OrderStatus):
+def update_order(order_id: int, order_status: str):
     order = get_order(order_id)
-    order['status'] = status
+    order['status'] = order_status
     response = requests.put(f"{api_url}/orders/{order_id}", json=order.dict())
     if response.status_code == 200:
         return response.json()

@@ -33,7 +33,7 @@ class Order(SQLModel, table=False):
     user_id: int = Field(foreign_key="user.id")
     address_id: int = Field(foreign_key="address.id")
     date: str = Field(default_factory=lambda: datetime.now().strftime("%d-%m-%Y %H:%M:%S"))
-    status: OrderStatus
+    status: str
     total_amount: float
 
 
