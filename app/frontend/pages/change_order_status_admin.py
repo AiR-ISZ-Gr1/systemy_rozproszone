@@ -9,8 +9,8 @@ make_sidebar()
 
 API_URL = "http://change_order_status:8004"
 
-def fetch_orders(status='all'):
-    response = requests.get(f"{API_URL}/orders", params={"status": status})
+def fetch_orders(order_status: str = 'all'):        
+    response = requests.get(f"{API_URL}/orders", params={"order_status": order_status})
     if response.status_code == 200:
         return [Order(**order) for order in response.json()]
     else:
@@ -31,10 +31,10 @@ def fetch_order_by_id(order_id: int) -> Optional[Order]:
         return None
 
 
-def update_order_status(order_id: int, status: OrderStatus):
+def update_order_status(order_id: int, order_status: str):
     url = "http://api:8000"
     order = fetch_order_by_id(order_id)
-    order.status = status
+    order.status = order_status
     response = requests.put(f"{url}/orders/{order_id}", json=order.dict())
     return response.status_code == 200
 
@@ -56,7 +56,7 @@ if search_id:
         st.write(f"Order Date: {order.date}")
         st.write(f"Customer ID: {order.user_id}")
         # st.write(f"df {order.items}")
-        st.write(f"Status: {order.status.value}")
+        st.write(f"Status: {order.status}")
         
         new_status = st.selectbox("Change Status", [status.value for status in OrderStatus], key=order.id)
         if st.button("Update Status", key=f"update_{order.id}"):
@@ -83,5 +83,5 @@ st.write(f"Displaying orders with status {status_filter}")
 
 # Display orders succinctly
 for order in orders:
-    if order.status.value == status_filter or status_filter == 'all':
-        st.write(f"Order ID: {order.id}, Status: {order.status.value}")
+    if order.status == status_filter or status_filter == 'all':
+        st.write(f"Order ID: {order.id}, Status: {order.status}")
