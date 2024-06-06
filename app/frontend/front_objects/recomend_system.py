@@ -34,7 +34,7 @@ class RecomendSystem:
                 with col:
                     if index < len(self.formated_products):
                         current = self.formated_products[index]
-                        if st.button(f' {current.get("name")} '):
+                        if st.button(f'{current.get("name")}'):
                             st.session_state.selected_product = current.get("id")
                             st.switch_page(Links.PRODUCT_DETAILSC)
                         curr_image = self.__show_photo__(current.get('image'))
@@ -47,4 +47,4 @@ class RecomendSystem:
         self.display()
         
         if st.button("Refresh"):
-            self.produkty.clear()
+            self.formated_products.clear()
