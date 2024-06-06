@@ -20,3 +20,6 @@ docker compose -f app/controllers/customer/history_orders/docker-compose.yml up 
 
 # compose for send_order (koszyk zamowien)
 docker compose -f app/controllers/customer/send_order/docker-compose.yml up -d --build
+
+# compose for changing ordres
+docker compose -f app/processes/chatbot/docker-compose.yml up -d --build
