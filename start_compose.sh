@@ -21,5 +21,8 @@ docker compose -f app/controllers/customer/history_orders/docker-compose.yml up 
 # compose for send_order (koszyk zamowien)
 docker compose -f app/controllers/customer/send_order/docker-compose.yml up -d --build
 
-# compose for changing ordres
-docker compose -f app/processes/chatbot/docker-compose.yml up -d --build
+# compose for change_order_status 
+docker compose -f app/controllers/admin/change_order_status/docker-compose.yml up -d --build
+
+# compose for magazyn_stan 
+docker compose -f app/controllers/admin/magazyn/docker-compose.yml up -d --build

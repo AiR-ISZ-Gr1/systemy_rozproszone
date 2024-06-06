@@ -34,18 +34,16 @@ class Order(SQLModel, table=True):
     address_id: int = Field(foreign_key="address.id")
     date: str = Field(
         default_factory=lambda: datetime.now().strftime("%d-%m-%Y %H:%M:%S"))
-    status: OrderStatus
+    status: str
     total_amount: float
-
 
 # class OrderStatus(str, Enum):
 #     PLACED = "placed"
 #     DONE = "done"
 
-
 class OrderUpdate(BaseModel):
     cart_id: Optional[int] = None
     user_id: Optional[int] = None
     date: Optional[str] = None
-    status: Optional[OrderStatus] = None
+    status: Optional[str] = None
     total_amount: Optional[float] = None
