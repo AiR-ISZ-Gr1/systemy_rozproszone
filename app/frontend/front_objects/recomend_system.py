@@ -35,7 +35,7 @@ class RecomendSystem:
                     if index < len(self.formated_products):
                         current = self.formated_products[index]
                         if st.button(f'{current.get("name")}'):
-                            st.session_state.selected_product = current.get("id")
+                            st.session_state.selected_product_id = current.get("id")
                             st.switch_page(Links.PRODUCT_DETAILSC)
                         curr_image = self.__show_photo__(current.get('image'))
                         st.image(curr_image, width=60)
