@@ -23,3 +23,6 @@ docker compose -f app/controllers/customer/send_order/docker-compose.yml up -d -
 
 # compose for changing ordres
 docker compose -f app/processes/chatbot/docker-compose.yml up -d --build
+
+# compose for change_order_status 
+docker compose -f app/controllers/admin/change_order_status/docker-compose.yml up -d --build
