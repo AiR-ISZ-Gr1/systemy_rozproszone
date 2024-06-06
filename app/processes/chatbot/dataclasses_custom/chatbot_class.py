@@ -63,7 +63,7 @@ class PromptFiller:
         async with aiohttp.ClientSession() as session:
             tasks = []
             for res in results:
-                flower_id = res.get('payload').get("Id")
+                flower_id = res.get('payload').get("id")
                 tasks.append(self.__fetch_product(session, flower_id))
 
             products = await asyncio.gather(*tasks)

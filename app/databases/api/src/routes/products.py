@@ -3,6 +3,7 @@ from typing import List, Any
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 from clients.mongodb import mongodb
+from clients.qdrant import QdrantManager
 from models.product import Product, ProductUpdate
 from qdrant_client import AsyncQdrantClient
 from sentence_transformers import SentenceTransformer
@@ -13,8 +14,7 @@ ROUTE_NAME = os.path.basename(__file__).replace(".py", "")
 
 router = APIRouter(prefix=f"/{ROUTE_NAME}", tags=[ROUTE_NAME])
 collection = mongodb[ROUTE_NAME]
-qdrant_client = AsyncQdrantClient('http://qdrant:6333')
-modelEmbed = SentenceTransformer('intfloat/e5-small-v2', cache_folder='src/model_st')
+qdrant_manager = QdrantManager()
 
 
 @router.get("/", response_model=List[Product])
@@ -35,19 +35,7 @@ async def get_all_products(
 async def create_product(product: Product):
     product_data = product.model_dump()
     inserted_product = collection.insert_one(product_data)
-    vector = modelEmbed.encode(product.description,normalize_embeddings=True)
-    num = await qdrant_client.count(collection_name="products_description")
-    point = PointStruct(
-                id=int(num.count),
-                vector=vector,
-                payload={"Id": product.id, "Name": product.name, "Description": product.description}
-            )
-
-    await qdrant_client.upsert(
-        collection_name="products_description",
-        wait=True,
-        points=[point],
-    )
+    await qdrant_manager.add_product_vec(product)
     return {"id": str(inserted_product.inserted_id), **product_data}
 
 
@@ -73,6 +61,7 @@ async def update_product(product_id: str, product: Product):
     product_data = product.model_dump() | {"id": product_id}
     updated_product = collection.update_one(
         {"id": product_id}, {"$set": product_data})
+    await qdrant_manager.update_product(product)
     if updated_product.modified_count == 1:
         return {"message": "Product updated successfully", **product_data}
     else:
@@ -106,10 +95,7 @@ class QuestionRequest(BaseModel):
 
 @router.post("/vec_search/", response_model=List[Any])
 async def vector_search(request: QuestionRequest):
-    vector = modelEmbed.encode(request.question, normalize_embeddings=True)
-    response = await qdrant_client.search(collection_name="products_description",
-                                          query_vector=vector,
-                                          limit=3)
+    response = await qdrant_manager.search(request.question)
     if response:
         return response
     else:
