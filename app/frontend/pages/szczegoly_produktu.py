@@ -38,8 +38,12 @@ def display_product_details():
             add_product = requests.post(f"{base_url}/users/{user_id}/cart/items", json={"product_id": chosen_product.id, "quantity": quantity})
         else:
             add_product = requests.post(f"{base_url}/users/{user_id}/cart/items", json={"product_id": chosen_product.id, "quantity": quantity})
-            st.write(add_product)
+            if add_product.status_code == 200:
+                st.success('Product added')
+            else:
+                st.error('Something went wrong')
         
+    #TODO opinie
     if st.button("Browse reviews"):
         st.info("Product reviews")
         st.write("1. Very good product!")

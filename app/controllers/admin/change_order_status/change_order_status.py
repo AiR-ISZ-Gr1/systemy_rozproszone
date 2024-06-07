@@ -8,6 +8,18 @@ app = FastAPI()
 api_url = "http://api:8000"
 
 
+def get_product(id:str,quantity:int):
+    resp = requests.get(f"{api_url}/products/{id}")
+    if resp.status_code == 200:
+        item ={'name': resp.json().get('name'),
+               'id': resp.json().get('id'),
+               'sell_price': resp.json().get('sell_price'),
+               'quantity': quantity}
+        return item
+    else:
+        print(f'Failed to get your product: {id}')
+    
+
 # get all orders with given status
 @app.get("/orders", response_model=List[Order])
 def get_orders(order_status: str):
@@ -32,14 +44,9 @@ async def get_order(order_id: int):
             item
             for item in requests.get(f"{api_url}/carts/{order['cart_id']}/items").json()
         ]
-        # products_quantitis = [
-        #     item['product_quantity']
-        #     for item in requests.get(f"{api_url}/carts/{order['cart_id']}/items").json()
-        # ]
-        order['products'] = [
-            requests.get(f"{api_url}/products/{item['id']}").json() | item
-            for item in products                
-        ]
+        print(products)
+        order['products'] = [get_product(flower.get('product_id'),flower.get('quantity')) for flower in products]
+        order['address'] = requests.get(f'{api_url}/addresses/{order.get("address_id")}').json()
         return order
     else:
         raise HTTPException(status_code=404, detail="Orders not found")
