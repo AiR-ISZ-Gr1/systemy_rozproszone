@@ -28,8 +28,8 @@ def fetch_order_by_id(order_id: int) -> Optional[Order]:
 def update_order_status(order_id: int, order_status: str):
     url = "http://api:8000"
     order = fetch_order_by_id(order_id)
-    order.status = order_status
-    response = requests.put(f"{url}/orders/{order_id}", json=order.dict())
+    order['status'] = order_status
+    response = requests.put(f"{url}/orders/{order_id}", json=order)
     return response.status_code == 200
 
 

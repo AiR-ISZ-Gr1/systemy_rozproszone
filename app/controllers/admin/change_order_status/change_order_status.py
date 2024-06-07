@@ -42,7 +42,7 @@ async def get_order(order_id: int):
         order = response.json()
         products = [
             item
-            for item in requests.get(f"{api_url}/carts/{order['cart_id']}/items").json()
+            for item in requests.get(f"{api_url}/carts/{order['cart_id']-1}/items").json()
         ]
         print(products)
         order['products'] = [get_product(flower.get('product_id'),flower.get('quantity')) for flower in products]
