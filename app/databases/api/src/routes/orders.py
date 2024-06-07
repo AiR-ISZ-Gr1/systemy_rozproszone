@@ -26,6 +26,16 @@ def read_orders(user: str = Query(default=None), session: Session = Depends(get_
     return session.exec(statement).all()
 
 
+@router.delete("/", status_code=200)
+def delete_orders(session: Session = Depends(get_session)):
+    statement = select(Order)
+    orders = session.exec(statement).all()
+    for order in orders:
+        session.delete(order)
+    session.commit()
+    return {"detail": "All orders deleted successfully"}
+
+
 @ router.get("/{order_id}", response_model=Order)
 def read_order(order_id: int, session: Session = Depends(get_session)):
     order = session.get(Order, order_id)

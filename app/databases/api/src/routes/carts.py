@@ -1,6 +1,6 @@
 import os
 from typing import List
-from fastapi import APIRouter, HTTPException, Depends, Path, Query
+from fastapi import APIRouter, HTTPException, Depends, Query
 from sqlmodel import Session, select
 
 from models.cart import Cart, CartUpdate, CartItem, CartItemUpdate
@@ -32,6 +32,16 @@ def create_cart(cart_data: Cart, user_id: int | None = Query(None, alias="user")
 @router.get("/", response_model=List[Cart])
 def read_carts(skip: int = 0, limit: int = 10, session: Session = Depends(get_session)):
     return session.exec(select(Cart).offset(skip).limit(limit)).all()
+
+
+@router.delete("/", status_code=200)
+def delete_carts(session: Session = Depends(get_session)):
+    statement = select(Cart)
+    carts = session.exec(statement).all()
+    for cart in carts:
+        session.delete(cart)
+    session.commit()
+    return {"detail": "All carts deleted successfully"}
 
 
 @router.get("/{cart_id}", response_model=Cart)
