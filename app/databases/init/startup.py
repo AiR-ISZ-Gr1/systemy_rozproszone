@@ -98,26 +98,17 @@ def init_qdrant(data, qdrant_url: str):
         print('Collection exists')
 
 def add_order(adres:Address, user_id:int, items: Dict, base_url:str):
+    create_cart = requests.post(f"http://{base_url}/users/{user_id}/cart", json={})
 
-    check_cart = requests.get(f"http://{base_url}/users/{user_id}/cart")
     for flower,quantity in items.items():
-        if check_cart.status_code == 404:
-            create_cart = requests.post(f"http://{base_url}/users/{user_id}/cart", json={})
-            add_product = requests.post(f"http://{base_url}/users/{user_id}/cart/items", json={"product_id": flower, "quantity": quantity})
-        else:
-            add_product = requests.post(f"http://{base_url}/users/{user_id}/cart/items", json={"product_id": flower, "quantity": quantity})
+        add_product = requests.post(f"http://{base_url}/users/{user_id}/cart/items", json={"product_id": flower, "quantity": quantity})
 
     response = requests.post(f"http://{base_url}/addresses",
                                 json=adres.model_dump()).json()
     address_id = response.get('id')
 
     response = requests.post(f"http://{base_url}/users/{user_id}").json()
-    if 'cart_id' not in response:
-        response = requests.post(
-            f"http://{base_url}/users/{user_id}/cart", json={}).json()
-        cart_id = response.get('id')
-    else:
-        cart_id = response.get('cart_id')
+    cart_id = create_cart.json().get('id')
 
     items = requests.get(
         f"http://{base_url}/carts/{cart_id}/items").json()
@@ -125,9 +116,8 @@ def add_order(adres:Address, user_id:int, items: Dict, base_url:str):
         requests.get(f"http://{base_url}/products/{item['product_id']}").json()
         for item in items
     ]
-
-    total_amount = sum(item['quantity'] * product['price']
-                       for item, product in zip(items, products))
+    total_amount = round(sum(item['quantity'] * product['sell_price']
+                       for item, product in zip(items, products)),2)
     dborder = OrderDb(
         status="DELIVERED",
         total_amount=total_amount,
