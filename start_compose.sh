@@ -1,29 +1,37 @@
-#!/bin/bash
+# !/bin/bash
 
-#  polecenie Docker Compose dla bazy danych
+# Run this file to start-up all docker containers developed for this project.
+# After running this file remember to wait untill container 'databases-startup' goes down! 
+
+# IMPORTANT: Only UNIX based systems can run this file!
+#            If on Windows see: start_compose.bat
+
+# databases
 docker compose -f app/databases/docker-compose.yml up -d --build
 
-#  polecenie Docker Compose dla logowania i rejestracji
+# login authentication
 docker compose -f app/login_register/docker-compose.yml up -d --build
 
-# przykładowy Docker Compose dla dodawania produktów
+# modify and delete product 
 docker compose -f app/controllers/admin/update_product/docker-compose.yml up -d --build
 
-#  polecenie Docker Compose dla chatbota
+# chatbot
 docker compose -f app/processes/chatbot/docker-compose.yml up -d --build
 
-# polecenie Docker Compose dla forntendu
+# frontend
 docker compose -f app/frontend/docker-compose.yml up -d --build
 
-# compose for history_orders
+# orders history
 docker compose -f app/controllers/customer/history_orders/docker-compose.yml up -d --build
 
-# compose for send_order (koszyk zamowien)
+# create order 
 docker compose -f app/controllers/customer/send_order/docker-compose.yml up -d --build
 
-# compose for reccomendations
+# reccomendations
 docker compose -f app/processes/reccomendation/docker-compose.yml up -d --build
-# compose for change_order_status 
+
+# order status change
 docker compose -f app/controllers/admin/change_order_status/docker-compose.yml up -d --build
-# compose for magazyn_stan 
+
+# warehouse stock management 
 docker compose -f app/controllers/admin/magazyn/docker-compose.yml up -d --build

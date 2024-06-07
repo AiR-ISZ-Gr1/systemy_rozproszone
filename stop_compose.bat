@@ -1,36 +1,34 @@
-# !/bin/bash
+@REM Run this file to stop all docker containers of this project.
 
-# Run this file to stop all docker containers of this project.
+@REM IMPORTANT: Only Windows can run this file!
+@REM            If on UNIX based system see: stop_compose.sh
 
-# IMPORTANT: Only UNIX based systems can run this file!
-#            If on Windows see: stop_compose.bat
-
-# databases
+@REM databases
 docker compose -f app/databases/docker-compose.yml down
 
-# login authentication
+@REM login authentication
 docker compose -f app/login_register/docker-compose.yml down
 
-# modify and delete product 
+@REM modify and delete product 
 docker compose -f app/controllers/admin/update_product/docker-compose.yml down
 
-# chatbot
+@REM chatbot
 docker compose -f app/processes/chatbot/docker-compose.yml down
 
-# frontend
+@REM frontend
 docker compose -f app/frontend/docker-compose.yml down
 
-# orders history
+@REM orders history
 docker compose -f app/controllers/customer/history_orders/docker-compose.yml down
 
-# create order 
+@REM create order 
 docker compose -f app/controllers/customer/send_order/docker-compose.yml down
 
-# reccomendations
+@REM reccomendations
 docker compose -f app/processes/reccomendation/docker-compose.yml down
 
-# order status change
+@REM order status change
 docker compose -f app/controllers/admin/change_order_status/docker-compose.yml down
 
-# warehouse stock management 
+@REM warehouse stock management 
 docker compose -f app/controllers/admin/magazyn/docker-compose.yml down
