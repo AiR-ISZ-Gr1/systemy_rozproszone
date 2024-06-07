@@ -20,7 +20,7 @@ def get_order_history(user_id):
 def display_order_details(order):
     st.markdown(f"### Order Details for ID #{order['id']}")
     st.markdown(f"**Order Status:** {order['status']}")
-    st.markdown(f"**Total Amount:** ${order['total_amount']}")
+    st.markdown(f"**Total Amount:** ${round(order['total_amount'],2)}")
     st.markdown(f"**Order Date:** {order['date']}")
 
     st.markdown("#### Products:")

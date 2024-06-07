@@ -68,13 +68,11 @@ status_filter = st.selectbox("Filter by Status", [status.value.upper() for statu
 
 # if status_filter == "all":
 orders = fetch_orders()
-# else:
-#     orders = fetch_orders(status=status_filter)
 
 # st.write(f"Displaying {len(orders)} orders with status {status_filter}")
 st.write(f"Displaying orders with status {status_filter}")
-
+orders.reverse()
 # Display orders succinctly
-for order in orders:
+for order in orders[:20]:
     if order.status == status_filter or status_filter == 'all':
         st.write(f"Order ID: {order.id}, Status: {order.status}")
