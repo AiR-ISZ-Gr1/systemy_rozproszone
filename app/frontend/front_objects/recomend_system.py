@@ -2,45 +2,49 @@ import requests
 import streamlit as st
 from .utils import Links
 import random
+from io import BytesIO
+from PIL import Image
+
 
 class RecomendSystem:
     def __init__(self) -> None:
-        self.produkty = []
+        self.formated_products = []
+        self.photo_url = "http://api:8000/files/download/"
         
-        
-    @staticmethod
-    @st.cache_data
-    def generuj_produkty(N):
-        produkty = []
-        for i in range(1, N+1):
-            cena = "${:.2f}".format(random.uniform(5, 50))  # Losowa cena w przedziale od $5.00 do $50.00
-            nazwa = f"Produkt {i}"
-            opis = f"To jest opis {nazwa}"
-            produkt = {"nazwa": nazwa, "zdjecie": "test.jpg", "cena": cena, "opis": opis}
-            produkty.append(produkt)
-        return produkty
+    def get_products(self,N):
+        products = requests.get(f'http://reccomend:8008/get_reccomendations/{N}').json()
+        for product in products:
+            cena = "${:.2f}".format(product.get('sell_price')) 
+            formated = {"name": product.get('name'), "image": product.get('image_id'), "price": cena,"id": product.get('id')}
+            self.formated_products.append(formated)
 
-    def wyswietl_kafelki_produktow(self):
-        if len(self.produkty) == 0:
-            self.produkty = self.generuj_produkty(3)
-                 
-        indeks_produktu = 0
-        while indeks_produktu < len(self.produkty):
+    def __show_photo__(self,product_photo_id: str):
+        response = requests.get(f"{self.photo_url}{product_photo_id}", stream=True)
+        if response.status_code == 200:
+            image = Image.open(BytesIO(response.content))
+            return image
+        else:
+            return None
+        
+    def display(self):
+        index = 0
+        while index < len(self.formated_products):
             col1, col2, col3 = st.columns([50,50,50])
             for col in [col1, col2, col3]:
                 with col:
-                    if indeks_produktu < len(self.produkty):
-                        produkt = self.produkty[indeks_produktu]
-                        if st.button(f' {produkt["nazwa"]} '):
-                            st.session_state.selected_product = produkt
+                    if index < len(self.formated_products):
+                        current = self.formated_products[index]
+                        if st.button(f'{current.get("name")}'):
+                            st.session_state.selected_product_id = current.get("id")
                             st.switch_page(Links.PRODUCT_DETAILSC)
-                        st.image(produkt["zdjecie"], width=60)
-                        st.write(f"Cena: {produkt['cena']}")
-                        indeks_produktu += 1
+                        curr_image = self.__show_photo__(current.get('image'))
+                        st.image(curr_image, width=60)
+                        st.write(f"Cena: {current.get('price')}")
+                        index += 1
                         
     def run(self):
-        self.generuj_produkty(3)
-        self.wyswietl_kafelki_produktow()
+        self.get_products(N=3)
+        self.display()
         
         if st.button("Refresh"):
-            self.produkty.clear()
+            self.formated_products.clear()

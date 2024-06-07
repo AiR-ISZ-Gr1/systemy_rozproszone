@@ -1,4 +1,4 @@
-,Name,Description,Buy_price,Sale_price,Quantities,pic_path,id,date,tags
+,Name,Description,Sale_price,Buy_price,Quantities,pic_path,id,date,tags
 0,PERIWINKLE,"Perfect as a ground cover, the flowers resemble small, delicate stars and are often found in shades of blue, purple, and white. Needs droughty. Blooms in mid-spring to mid-fall.",12.2,8.1,40,init_data/products/img_flowers/periwinkle.jpg,_ihvY2cxEF,01-06-2024 12:35:20,flower
 1,BELLFLOWER,"Known for their resemblance to bells, these flowers come in shades of blue, purple, pink, and white and add a whimsical touch to any garden. Needs well-drained soil. Blooms in early summer to early fall.",13.7,13.1,67,init_data/products/img_flowers/bellflower.jpg,X8tcuAiPKf,01-06-2024 12:35:20,flower
 2,LILY,"A highly recognized flower which has bright colors and a distinct fragrance, lilies are often associated with purity and refined beauty. Needs well-drained soil. Blooms in spring to early fall.",15.3,10.5,41,init_data/products/img_flowers/lily.jpg,J7hVRECgEm,01-06-2024 12:35:20,flower
