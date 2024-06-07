@@ -48,7 +48,9 @@ if search_id:
         with st.expander('Products'):
             st.write(order.get('products'))
         with st.expander('Address details'):
-            st.write(order.get('address'))
+            no_id = order.get('address')
+            del(no_id['id'])
+            st.write(no_id)
         new_status = st.selectbox("Change Status", [status.value.upper() for status in OrderStatus], key=order.get('id'))
         if st.button("Update Status", key=f"update_{order.get('id')}"):
             if update_order_status(order.get('id'), new_status):
