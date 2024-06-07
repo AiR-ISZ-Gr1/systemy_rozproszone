@@ -17,7 +17,7 @@ async def get_order_history(user: str):
     for order in response:
         cart_items = [
             item
-            for item in requests.get(f"http://api:8000/carts/{order['cart_id']}/items").json()
+            for item in requests.get(f"http://api:8000/carts/{order['cart_id']-1}/items").json()
         ]
         order['products'] = [
             requests.get(

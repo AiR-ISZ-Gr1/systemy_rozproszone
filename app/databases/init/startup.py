@@ -6,14 +6,30 @@ import requests
 import nanoid
 from datetime import datetime
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Dict, Optional
 from io import BytesIO
 from PIL import Image
-
+import numpy as np
 
 image_download_url = "http://api:8000/files/download/"
 image_upload_url = "http://api:8000/files/upload"
 
+class OrderDb(BaseModel):
+    cart_id: int
+    user_id: int
+    address_id: int
+    date: str = Field(
+        default_factory=lambda: datetime.now().strftime("%d-%m-%Y %H:%M:%S"))
+    status: str
+    total_amount: float
+
+
+class Address(BaseModel):
+    id: Optional[int] = None
+    name: str
+    street: str
+    city: str
+    postal_code: str
 
 class Product(BaseModel):
     id: str = Field(default_factory=lambda: nanoid.generate(size=10))
@@ -54,7 +70,7 @@ class Product(BaseModel):
         self.image_id = response.json().get('file_id')
         return response
 
-def create_user(username, password,address,cart, is_admin=False):
+def create_user(username, password, is_admin=False):
     user_data = {
         "username": username,
         "password": password,
@@ -80,6 +96,50 @@ def init_qdrant(data, qdrant_url: str):
         )
     else:
         print('Collection exists')
+
+def add_order(adres:Address, user_id:int, items: Dict, base_url:str):
+
+    check_cart = requests.get(f"http://{base_url}/users/{user_id}/cart")
+    for flower,quantity in items.items():
+        if check_cart.status_code == 404:
+            create_cart = requests.post(f"http://{base_url}/users/{user_id}/cart", json={})
+            add_product = requests.post(f"http://{base_url}/users/{user_id}/cart/items", json={"product_id": flower, "quantity": quantity})
+        else:
+            add_product = requests.post(f"http://{base_url}/users/{user_id}/cart/items", json={"product_id": flower, "quantity": quantity})
+
+    response = requests.post(f"http://{base_url}/addresses",
+                                json=adres.model_dump()).json()
+    address_id = response.get('id')
+
+    response = requests.post(f"http://{base_url}/users/{user_id}").json()
+    if 'cart_id' not in response:
+        response = requests.post(
+            f"http://{base_url}/users/{user_id}/cart", json={}).json()
+        cart_id = response.get('id')
+    else:
+        cart_id = response.get('cart_id')
+
+    items = requests.get(
+        f"http://{base_url}/carts/{cart_id}/items").json()
+    products = [
+        requests.get(f"http://{base_url}/products/{item['product_id']}").json()
+        for item in items
+    ]
+
+    total_amount = sum(item['quantity'] * product['price']
+                       for item, product in zip(items, products))
+    dborder = OrderDb(
+        status="DELIVERED",
+        total_amount=total_amount,
+        address_id=address_id,
+        user_id=user_id,
+        cart_id=cart_id,
+    )
+    print(dborder.model_dump())
+    response = requests.post(f"http://{base_url}/orders",
+                             json=dborder.model_dump())
+    
+
 
 
 def main():
@@ -111,8 +171,36 @@ def main():
                 print('Product created')
 
     
-    create_user('TestA','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',1,1,1)
-    create_user('TestU','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0,0,0)
+    create_user('TestA','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',1)
+    create_user('TestU','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User1','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User2','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User3','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User4','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User5','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User6','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User7','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User8','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User9','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User10','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User11','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User12','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User13','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User14','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User15','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+
+    addresses = pd.read_csv('init_data/addresses.csv')
+    df_orders = pd.read_csv('init_data/orders.csv')
+    for order in df_orders.iterrows():
+        order_dict = {order[1].values[1] : order[1].values[6],
+                    order[1].values[2] : order[1].values[7],
+                    order[1].values[3] : order[1].values[8],
+                    order[1].values[4] : order[1].values[9],
+                    order[1].values[5] : order[1].values[10]}
+        user_id = np.random.randint(low=1,high=17)
+        adres = Address(**addresses.iloc[user_id].to_dict())
+        add_order(adres,user_id,order_dict,'api:8000')
+    
 
 if __name__ == "__main__":
     main()

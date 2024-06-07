@@ -3,6 +3,8 @@ import streamlit as st
 import pandas as pd
 from front_objects.utils import Links
 import requests
+from io import BytesIO
+from PIL import Image
 
 make_sidebar()
 base_url = "http://api:8000"
@@ -12,14 +14,24 @@ def change_quantity(item_id, quantity, product_id):
     if quantity > 0:
         requests.post(f"{base_url}/users/{st.session_state.user_id}/cart/items", 
                       json={"product_id": product_id, "quantity": quantity})
-    st.experimental_rerun()
+    st.rerun()
+
+def show_photo(product_photo_id: str):
+    response = requests.get(f"http://api:8000/files/download/{product_photo_id}", stream=True)
+    if response.status_code == 200:
+        image = Image.open(BytesIO(response.content))
+        return image
+    else:
+        return None
 
 st.write("# 🛒 Shopping Cart")
 
 get_items_in_cart = requests.get(f"{base_url}/users/{st.session_state.user_id}/cart/items").json()
 
 if type(get_items_in_cart) == list and len(get_items_in_cart) > 0:
+    all_ids = []
     # Headers for the table
+    
     col1, col2, col3, col4, col5 = st.columns([2, 1, 1, 1, 2])
 
     col1.subheader("Product Name")
@@ -33,6 +45,8 @@ if type(get_items_in_cart) == list and len(get_items_in_cart) > 0:
     for i in get_items_in_cart:
         item_id = i["id"]
         product_id = str(i["product_id"])
+        if product_id not in all_ids:
+            all_ids.append(product_id)
         chosen_quantity = i["quantity"]
         
         get_item_details = requests.get(f"{base_url}/products/{product_id}").json()
@@ -62,8 +76,22 @@ if type(get_items_in_cart) == list and len(get_items_in_cart) > 0:
                     change_quantity(item_id, new_quantity, product_id)
 
     st.write(f"**Total Cost:** ${total_cost:.2f}")
-
+    resp = requests.post(f'http://reccomend:8008/freq_together',json=all_ids).json()
+    st.write('')
+    st.write('*Frequently purchased together*')
+    buts=  st.columns(6)
+    for col,item in zip(buts,resp):
+        with col:
+            if st.button(f'{item.get("name")}',key=str(item.get('name'))):
+                st.session_state.selected_product_id = item.get("id")
+                st.switch_page(Links.PRODUCT_DETAILSC)
+            curr_image = show_photo(item.get('image_id'))
+            st.image(curr_image, width=90)
+            st.write(f"Cena: ${item.get('sell_price')}")
+    
     if st.button("Checkout"):
         st.switch_page(Links.SEND_PAGE)
+
+
 else:
     st.write("Your cart is empty.")

@@ -73,15 +73,15 @@ async def submit_order(order: Order):
     )
     response = requests.post("http://api:8000/addresses",
                              json=address.model_dump()).json()
-    address_id = response['id']
+    address_id = response.get('id')
 
     response = requests.post(f"http://api:8000/users/{order.user_id}").json()
     if 'cart_id' not in response:
         response = requests.post(
             f"http://api:8000/users/{order.user_id}/cart", json={}).json()
-        cart_id = response['id']
+        cart_id = response.get('id')
     else:
-        cart_id = response['cart_id']
+        cart_id = response.get('cart_id')
 
     items = requests.get(
         f"http://api:8000/carts/{cart_id}/items").json()
@@ -104,9 +104,8 @@ async def submit_order(order: Order):
 
     total_amount = sum(item['quantity'] * product['price']
                        for item, product in zip(items, products))
-    check = OrderStatus.PENDING.value
     dborder = OrderDb(
-        status=check,
+        status="PENDING",
         total_amount=total_amount,
         address_id=address_id,
         user_id=order.user_id,
