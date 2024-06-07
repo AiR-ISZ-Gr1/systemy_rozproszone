@@ -54,7 +54,7 @@ class Product(BaseModel):
         self.image_id = response.json().get('file_id')
         return response
 
-def create_user(username, password,address,cart, is_admin=False):
+def create_user(username, password, is_admin=False):
     user_data = {
         "username": username,
         "password": password,
@@ -111,8 +111,25 @@ def main():
                 print('Product created')
 
     
-    create_user('TestA','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',1,1,1)
-    create_user('TestU','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0,0,0)
+    create_user('TestA','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',1)
+    create_user('TestU','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User1','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User2','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User3','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User4','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User5','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User6','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User7','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User8','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User9','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User10','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User11','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User12','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User13','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User14','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+    create_user('User15','$2b$12$kj2seUugJ5DLVV8YoPSUyuChpTdQYxBIIGt.rYtJZZIekcQUxHfaG',0)
+
+    
 
 if __name__ == "__main__":
     main()

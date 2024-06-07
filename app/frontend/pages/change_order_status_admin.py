@@ -58,7 +58,7 @@ if search_id:
         # st.write(f"df {order.items}")
         st.write(f"Status: {order.status}")
         
-        new_status = st.selectbox("Change Status", [status.value for status in OrderStatus], key=order.id)
+        new_status = st.selectbox("Change Status", [status.value.upper() for status in OrderStatus], key=order.id)
         if st.button("Update Status", key=f"update_{order.id}"):
             if update_order_status(order.id, new_status):
                 st.success(f"Order {order.id} status updated to {new_status}")
@@ -71,7 +71,7 @@ if search_id:
 st.write("---")
 st.header("All Orders")
 
-status_filter = st.selectbox("Filter by Status", [status.value for status in OrderStatus] + ['all'])
+status_filter = st.selectbox("Filter by Status", [status.value.upper() for status in OrderStatus] + ['all'])
 
 # if status_filter == "all":
 orders = fetch_orders()
