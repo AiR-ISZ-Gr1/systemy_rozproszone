@@ -4,6 +4,8 @@ import re
 import requests
 from front_objects.navigation import make_sidebar
 from pydantic import BaseModel
+from front_objects.utils import Links
+from front_objects.classes.product import Product
 
 make_sidebar()
 
@@ -15,6 +17,7 @@ Please fill in the details below so we can deliver your order to the specified a
 """
 )
 
+base_url = "http://api:8000"
 # Function to validate email
 class CartItem(BaseModel):
     product_id: str
@@ -23,6 +26,7 @@ class CartItem(BaseModel):
 def validate_email(email):
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     return re.match(pattern, email)
+
 
 # User data form
 with st.form("shipping_form"):
@@ -39,10 +43,14 @@ with st.form("shipping_form"):
 
     submitted = st.form_submit_button("Submit Order")
 
+
 if submitted:
+    
+    
     if not all([first_name, last_name, address, city, postal_code, email]) or not validate_email(email):
         st.warning("Please fill in all fields in the form correctly.")
     else:
+        get_items_in_cart = requests.get(f"{base_url}/users/{st.session_state.user_id}/cart/items").json()
         order_data = {
             "first_name": first_name,
             "last_name": last_name,
@@ -52,9 +60,32 @@ if submitted:
             "email": email,
             "payment_method": payment_method,
             "user_id": st.session_state.user_id,
-            "order_summary": []
+            "order_summary": get_items_in_cart
         }
+        
+        for i in get_items_in_cart:
+            product_id = i["product_id"]
+            qunanity_in_cart = i["quantity"]
+            
+            product_details_in_shop = requests.get(f"{base_url}/products/{product_id}").json()
+            
+            product_details_in_shop_obj = Product(**product_details_in_shop)
+            
+            changed_quantity_product_obj = Product(**product_details_in_shop)
 
+            
+            quanitity_in_shop = product_details_in_shop_obj.quantity
+            
+            if quanitity_in_shop > 0 and quanitity_in_shop >= qunanity_in_cart:
+                update_quantity = quanitity_in_shop - qunanity_in_cart
+                changed_quantity_product_obj.quantity = update_quantity
+                
+                response = requests.put(f"{base_url}/products/{product_id}", json=changed_quantity_product_obj.dict())          
+                
+                
+            else: 
+                st.switch_page(Links.PAGE_2)
+        
         response = requests.post(
             "http://send_order:8006/submit_order/", json=order_data)
 
@@ -68,6 +99,10 @@ if submitted:
             st.write(f"Postal Code: {postal_code}")
             st.write(f"Email: {email}")
             st.write(f"Chosen Payment Method: {payment_method}")
+            
+            
+            
+            
         else:
             st.write(response)
             st.error("There was an error placing your order. Please try again.")
