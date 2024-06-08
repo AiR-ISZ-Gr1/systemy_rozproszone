@@ -84,10 +84,7 @@ docker compose -f app/login_register/docker-compose.yml up
 ```bash
 docker compose -f app/databases/docker-compose.yml up
 ```
-
-<video width="640" height="480" controls>
-  <source src="demo.webm" type="video/webm">
-</video>
+<video src='demo.webm' width=180/>
 
 
 
