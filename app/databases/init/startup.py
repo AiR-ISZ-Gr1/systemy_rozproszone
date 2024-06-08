@@ -190,7 +190,11 @@ def main():
         user_id = np.random.randint(low=1,high=17)
         adres = Address(**addresses.iloc[user_id].to_dict())
         add_order(adres,user_id,order_dict,'api:8000')
-    
+    requests.post('http://api:8000/opinions/',json={'user_id':4, "product_id": "_ihvY2cxEF","content": "Beautiful"})
+    requests.post('http://api:8000/opinions/',json={'user_id':5, "product_id": "X8tcuAiPKf","content": "Very pretty"})
+    requests.post('http://api:8000/opinions/',json={'user_id':6, "product_id": "sF4-20cYQc","content": "A bit pricy"})
+    requests.post('http://api:8000/opinions/',json={'user_id':4, "product_id": "_ihvY2cxEF","content": "I like it a lot"})
+    requests.post('http://api:8000/opinions/',json={'user_id':6, "product_id": "sF4-20cYQc","content": "Looks beautiful in my garden"})
 
 if __name__ == "__main__":
     main()
