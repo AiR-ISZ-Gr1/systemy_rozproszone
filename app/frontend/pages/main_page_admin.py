@@ -54,7 +54,7 @@ image = st.file_uploader('Photo of the product', type=['jpg', 'jpeg', 'png'])
 
 
 
-if st.button('Dodaj produkt'):
+if st.button('Add product'):
     if name and description and sell_price and quantity and buy_price and tags and image:
         product = Product(
             name = name,

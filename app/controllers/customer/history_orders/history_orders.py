@@ -15,7 +15,7 @@ async def get_order_history(user: str):
     if not response:
         raise HTTPException(status_code=404, detail="Orders not found")
 
-    for order in response:
+    for order in response[-20:]:
         cart_items = [
             item
             for item in requests.get(f"http://api:8000/carts/{order['cart_id']-1}/items").json()
@@ -25,7 +25,7 @@ async def get_order_history(user: str):
                 f"http://api:8000/products/{item['product_id']}").json() | dict(quantity=item['quantity'])
             for item in cart_items
         ]
-    return response
+    return response[-20:]
 
 
 # Endpoint do przyjmowania opinii o produktach

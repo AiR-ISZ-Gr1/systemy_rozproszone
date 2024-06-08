@@ -52,18 +52,7 @@ if submitted:
         st.warning("Please fill in all fields in the form correctly.")
     else:
         get_items_in_cart = requests.get(f"{base_url}/users/{st.session_state.user_id}/cart/items").json()
-        order_data = {
-            "first_name": first_name,
-            "last_name": last_name,
-            "address": address,
-            "city": city,
-            "postal_code": postal_code,
-            "email": email,
-            "payment_method": payment_method,
-            "user_id": st.session_state.user_id,
-            "order_summary": get_items_in_cart
-        }
-        
+        total_amount = 0
         for i in get_items_in_cart:
             product_id = i["product_id"]
             qunanity_in_cart = i["quantity"]
@@ -73,8 +62,8 @@ if submitted:
             product_details_in_shop_obj = Product(**product_details_in_shop)
             
             changed_quantity_product_obj = Product(**product_details_in_shop)
-
-            
+            price_item =  product_details_in_shop_obj.sell_price
+            total_amount += price_item*qunanity_in_cart
             quanitity_in_shop = product_details_in_shop_obj.quantity
             
             if quanitity_in_shop > 0 and quanitity_in_shop >= qunanity_in_cart:
@@ -82,10 +71,23 @@ if submitted:
                 changed_quantity_product_obj.quantity = update_quantity
                 
                 response = requests.put(f"{base_url}/products/{product_id}", json=changed_quantity_product_obj.dict())          
-                
+
                 
             else: 
                 st.switch_page(Links.PAGE_2)
+        order_data = {
+            "first_name": first_name,
+            "last_name": last_name,
+            "address": address,
+            "city": city,
+            "postal_code": postal_code,
+            "email": email,
+            "payment_method": payment_method,
+            "user_id": st.session_state.user_id,
+            "total_amount": total_amount
+        }
+        
+
         
         response = requests.post(
             "http://send_order:8006/submit_order/", json=order_data)
