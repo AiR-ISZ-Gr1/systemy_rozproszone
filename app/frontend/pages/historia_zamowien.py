@@ -70,12 +70,6 @@ if username:
         for order in orders[:20]:
             with st.expander(f"Order #{order['id']}"):
                 display_order_details(order)
-        #         st.session_state[f"expanded_order_{order['id']}"] = not st.session_state.get(
-        #             f"expanded_order_{order['id']}", False)
-
-        # for order in orders:
-        #     if st.session_state.get(f"expanded_order_{order['id']}", False):
-        #         display_order_details(order)
     else:
         st.write("No orders found!")
 else:

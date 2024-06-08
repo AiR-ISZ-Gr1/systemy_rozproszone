@@ -62,6 +62,7 @@ class Order(BaseModel):
     email: str
     payment_method: str
     user_id: int
+    total_amount: float
 
 @app.post("/submit_order/")
 async def submit_order(order: Order):
@@ -102,11 +103,11 @@ async def submit_order(order: Order):
             content=f"The following products are missing: {missing_quantity}"
         )
 
-    total_amount = round(sum(item['quantity'] * product['sell_price']
-                       for item, product in zip(items, products)),2)
+    # total_amount = round(sum(item['quantity'] * product['sell_price']
+    #                    for item, product in zip(items, products)),2)
     dborder = OrderDb(
         status="PENDING",
-        total_amount=total_amount,
+        total_amount=order.total_amount,
         address_id=address_id,
         user_id=order.user_id,
         cart_id=cart_id,
