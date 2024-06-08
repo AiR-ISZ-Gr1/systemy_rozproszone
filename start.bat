@@ -1,7 +1,7 @@
 @echo off
 
 REM Run this file to initialize all docker containers developed for this project.
-REM After running this file remember to wait untill container 'databases-startup' goes down! 
+REM This script will run until the container 'databases-startup' initializes all crucial data and shuts down.
 
 REM IMPORTANT: Only Windows can run this file!
 REM            If on UNIX based system see: start_compose.sh
