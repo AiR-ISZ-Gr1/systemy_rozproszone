@@ -25,7 +25,7 @@ This project provides ...
     ```
     If on Windows open Windows PowerShell as admin and run:
     ```bash
-    start_compose.bat
+    ./start_compose.bat
     ```
 
 3. If the port `XXXX` for setting up database is busy try:
