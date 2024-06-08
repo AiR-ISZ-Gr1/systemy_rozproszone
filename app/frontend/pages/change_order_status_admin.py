@@ -16,17 +16,11 @@ def fetch_orders(order_status: str = 'all'):
     else:
         return []
 
-# def fetch_order_by_id(order_id):
-#     response = requests.get(f"{API_URL}/orders/{order_id}")
-#     if response.status_code == 200:
-#         return Order(**response.json())
-#     else:
-#         return None
 
 def fetch_order_by_id(order_id: int) -> Optional[Order]:
     response = requests.get(f"{API_URL}/orders/{order_id}")
     if response.status_code == 200:
-        return Order(**response.json())
+        return response.json()
     else:
         return None
 
@@ -34,34 +28,33 @@ def fetch_order_by_id(order_id: int) -> Optional[Order]:
 def update_order_status(order_id: int, order_status: str):
     url = "http://api:8000"
     order = fetch_order_by_id(order_id)
-    order.status = order_status
-    response = requests.put(f"{url}/orders/{order_id}", json=order.dict())
+    order['status'] = order_status
+    response = requests.put(f"{url}/orders/{order_id}", json=order)
     return response.status_code == 200
 
-# def update_order_status(order_id: int, status: OrderStatus):
-#     url = "http://api:8000"
-#     order = fetch_order_by_id(order_id)
-#     order.status = status
-#     response = requests.put(f"{url}/orders/{order_id}", params={"status": status})
-#     return response.status_code == 200
+
 st.title("Order Management System")
 
 search_id = st.text_input("Enter Order ID to search")
 
 if search_id:
     order = fetch_order_by_id(search_id)
-    # st.write(order)r
     if order:
-        st.write(f"Order ID: {order.id}")
-        st.write(f"Order Date: {order.date}")
-        st.write(f"Customer ID: {order.user_id}")
-        # st.write(f"df {order.items}")
-        st.write(f"Status: {order.status}")
+        st.write(f"Order ID: {order.get('id')}")
+        st.write(f"Order Date: {order.get('date')}")
+        st.write(f"Customer ID: {order.get('user_id')}")
+        st.write(f"Status: {order.get('status')}")
         
-        new_status = st.selectbox("Change Status", [status.value for status in OrderStatus], key=order.id)
-        if st.button("Update Status", key=f"update_{order.id}"):
-            if update_order_status(order.id, new_status):
-                st.success(f"Order {order.id} status updated to {new_status}")
+        with st.expander('Products'):
+            st.write(order.get('products'))
+        with st.expander('Address details'):
+            no_id = order.get('address')
+            del(no_id['id'])
+            st.write(no_id)
+        new_status = st.selectbox("Change Status", [status.value.upper() for status in OrderStatus], key=order.get('id'))
+        if st.button("Update Status", key=f"update_{order.get('id')}"):
+            if update_order_status(order.get('id'), new_status):
+                st.success(f"Order {order.get('id')} status updated to {new_status}")
             else:
                 st.error("Failed to update order status")
     else:
@@ -71,17 +64,15 @@ if search_id:
 st.write("---")
 st.header("All Orders")
 
-status_filter = st.selectbox("Filter by Status", [status.value for status in OrderStatus] + ['all'])
+status_filter = st.selectbox("Filter by Status", [status.value.upper() for status in OrderStatus] + ['all'])
 
 # if status_filter == "all":
 orders = fetch_orders()
-# else:
-#     orders = fetch_orders(status=status_filter)
 
 # st.write(f"Displaying {len(orders)} orders with status {status_filter}")
 st.write(f"Displaying orders with status {status_filter}")
-
+orders.reverse()
 # Display orders succinctly
-for order in orders:
+for order in orders[:20]:
     if order.status == status_filter or status_filter == 'all':
         st.write(f"Order ID: {order.id}, Status: {order.status}")

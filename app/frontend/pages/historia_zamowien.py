@@ -11,7 +11,6 @@ def get_order_history(user_id):
         response = requests.get(f"http://history_orders:8007/orders/{user_id}")
         response.raise_for_status()
         orders = response.json()
-        # st.write(orders)
         return orders
     except requests.exceptions.HTTPError as err:
         st.error(f"HTTP error occurred: {err}")
@@ -21,7 +20,7 @@ def get_order_history(user_id):
 def display_order_details(order):
     st.markdown(f"### Order Details for ID #{order['id']}")
     st.markdown(f"**Order Status:** {order['status']}")
-    st.markdown(f"**Total Amount:** ${order['total_amount']}")
+    st.markdown(f"**Total Amount:** ${round(order['total_amount'],2)}")
     st.markdown(f"**Order Date:** {order['date']}")
 
     st.markdown("#### Products:")
@@ -35,26 +34,26 @@ def display_order_details(order):
         </div>
         """, unsafe_allow_html=True)
 
-        if (order['status'] == OrderStatus.DELIVERED.value or order['status'] == OrderStatus.RETURNED.value) and not product.get('review'):
-            with st.expander(f"Add review for {product['name']}"):
-                review_text = st.text_area(
-                    "Your review", key=f"review_text_{order['id']}_{product['name']}")
-                if st.button("Submit Review", key=f"submit_button_{order['id']}_{product['name']}"):
-                    send_review(
-                        username, order['id'], product['name'], review_text)
+        if (order['status'] == "DELIVERED" or order['status'] == "RETURNED") and not product.get('review'):
+            st.write(f"Add review for {product['name']}")
+            review_text = st.text_area(
+                "Your review", key=f"review_text_{order['id']}_{product['name']}")
+            if st.button("Submit Review", key=f"submit_button_{order['id']}_{product['name']}"):
+                send_review(
+                    st.session_state.user_id, order['id'], product['id'], review_text,product['name'])
 
-def send_review(username, order_id, product, review):
+def send_review(user_id, order_id, product_id, review,name):
     review_data = {
-        "username": username,
+        "user_id": user_id,
         "order_id": order_id,
-        "product": product,
-        "review": review
+        "product_id": product_id,
+        "content": review
     }
     try:
         response = requests.post(
             "http://history_orders:8007/review", json=review_data)
         response.raise_for_status()
-        st.success(f"Review for {product} has been successfully submitted!")
+        st.success(f"Review for {name} has been successfully submitted!")
     except requests.exceptions.HTTPError as err:
         st.error(f"HTTP error occurred: {err}")
     except Exception as err:
@@ -67,14 +66,16 @@ username = st.session_state.get("username", None)
 if username:
     orders = get_order_history(st.session_state.user_id)
     if orders:
-        for order in orders:
-            if st.button(f"Order #{order['id']}"):
-                st.session_state[f"expanded_order_{order['id']}"] = not st.session_state.get(
-                    f"expanded_order_{order['id']}", False)
-
-        for order in orders:
-            if st.session_state.get(f"expanded_order_{order['id']}", False):
+        orders.reverse()
+        for order in orders[:20]:
+            with st.expander(f"Order #{order['id']}"):
                 display_order_details(order)
+        #         st.session_state[f"expanded_order_{order['id']}"] = not st.session_state.get(
+        #             f"expanded_order_{order['id']}", False)
+
+        # for order in orders:
+        #     if st.session_state.get(f"expanded_order_{order['id']}", False):
+        #         display_order_details(order)
     else:
         st.write("No orders found!")
 else:

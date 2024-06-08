@@ -38,13 +38,20 @@ def display_product_details():
             add_product = requests.post(f"{base_url}/users/{user_id}/cart/items", json={"product_id": chosen_product.id, "quantity": quantity})
         else:
             add_product = requests.post(f"{base_url}/users/{user_id}/cart/items", json={"product_id": chosen_product.id, "quantity": quantity})
-            st.write(add_product)
+            if add_product.status_code == 200:
+                st.success('Product added')
+            else:
+                st.error('Something went wrong')
         
     if st.button("Browse reviews"):
-        st.info("Product reviews")
-        st.write("1. Very good product!")
-        st.write("2. A bit too expensive for its quality.")
-    
+        
+        all_opinions = requests.get('http://api:8000/opinions/',params={'product_id':st.session_state.selected_product_id}).json()
+        if all_opinions:
+            st.info("Product reviews:")
+            for index,opinion in enumerate(all_opinions):
+                st.write(f'{index+1}. {opinion.get("content")}')
+        else:
+            st.info("No reviews yet!")
     if st.button("Back to all products"):
         del st.session_state.selected_product_id
         st.switch_page(Links.ALL_PRODUCTS)

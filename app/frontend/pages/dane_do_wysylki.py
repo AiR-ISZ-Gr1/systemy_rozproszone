@@ -42,8 +42,9 @@ with st.form("shipping_form"):
                                   "Credit Card", "Bank Transfer", "PayPal"])
 
     submitted = st.form_submit_button("Submit Order")
-
-
+    cart_id = requests.get(f'http://api:8000/users/{st.session_state.user_id}/cart').json()
+    items = requests.get(f'http://api:8000/carts/{cart_id.get("id")}/items').json()
+    all_ids = [ids.get('product_id') for ids in items]
 if submitted:
     
     
@@ -88,6 +89,7 @@ if submitted:
         
         response = requests.post(
             "http://send_order:8006/submit_order/", json=order_data)
+        requests.put('http://reccomend:8008/update_orders',json=all_ids)
 
         if response.status_code == 200:
             st.success("Thank you for your order!")
