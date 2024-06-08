@@ -1,9 +1,13 @@
 @echo off
-@REM Run this file to initialize all docker containers developed for this project.
-@REM After running this file remember to wait untill container 'databases-startup' goes down! 
 
-@REM IMPORTANT: Only Windows can run this file!
-@REM            If on UNIX based system see: start_compose.sh
+REM Run this file to initialize all docker containers developed for this project.
+REM After running this file remember to wait untill container 'databases-startup' goes down! 
+
+REM IMPORTANT: Only Windows can run this file!
+REM            If on UNIX based system see: start_compose.sh
+
+REM Stop containers if busy
+call stop_compose.bat
 
 :port_checking
 REM Check if port 5432 is in use
@@ -15,7 +19,15 @@ IF %ERRORLEVEL% EQU 0 (
 ) ELSE (
     echo Port 5432 is free. Starting Docker Compose.
     call start_compose.bat
-    GOTO EOF
+    echo Waiting for database startup to complete. This might take a few minutes...
+    :loop
+    docker ps -f status=exited | findstr /i "databases-startup-1"
+    if %errorlevel% EQU 0 (
+        echo Everything is ready!
+        GOTO EOF
+    )
+    timeout /nobreak /t 5 > nul
+    GOTO loop
 )
 
 :process_display
@@ -45,4 +57,3 @@ taskkill /PID %pid% /F
 GOTO port_checking
 
 :EOF
-echo Process finished.
