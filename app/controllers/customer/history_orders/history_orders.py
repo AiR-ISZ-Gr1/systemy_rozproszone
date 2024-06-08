@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, Request
 import csv
 import os
 import requests
+from typing import Dict
 
 app = FastAPI()
 
@@ -29,23 +30,18 @@ async def get_order_history(user: str):
 
 # Endpoint do przyjmowania opinii o produktach
 @ app.post("/review")
-async def submit_review(request: Request):
-    review = await request.json()
-    username = review.get("username")
-    order_id = review.get("order_id")
-    product = review.get("product")
-    review_text = review.get("review")
-
-    if not username or not order_id or not product or not review_text:
+def submit_review(request:Dict):
+    user_id = request.get("user_id")
+    product_id = request.get("product_id")
+    content = request.get("content")
+    if not user_id or not product_id or not content :
         raise HTTPException(status_code=400, detail="Incomplete review data")
+    try:
+        requests.post('http://api:8000/opinions/',json={'user_id':user_id, "product_id": product_id,
+                                                        "content": content})
+        return {"message": "Review submitted successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-    review_filename = "reviews.csv"
-    review_exists = os.path.isfile(review_filename)
 
-    with open(review_filename, mode="a", newline='', encoding="utf-8") as file:
-        writer = csv.writer(file)
-        if not review_exists:
-            writer.writerow(["username", "order_id", "product", "review"])
-        writer.writerow([username, order_id, product, review_text])
-
-    return {"message": "Review submitted successfully"}
+    

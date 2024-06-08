@@ -40,20 +40,20 @@ def display_order_details(order):
                 "Your review", key=f"review_text_{order['id']}_{product['name']}")
             if st.button("Submit Review", key=f"submit_button_{order['id']}_{product['name']}"):
                 send_review(
-                    username, order['id'], product['name'], review_text)
+                    st.session_state.user_id, order['id'], product['id'], review_text,product['name'])
 
-def send_review(username, order_id, product, review):
+def send_review(user_id, order_id, product_id, review,name):
     review_data = {
-        "username": username,
+        "user_id": user_id,
         "order_id": order_id,
-        "product": product,
-        "review": review
+        "product_id": product_id,
+        "content": review
     }
     try:
         response = requests.post(
             "http://history_orders:8007/review", json=review_data)
         response.raise_for_status()
-        st.success(f"Review for {product} has been successfully submitted!")
+        st.success(f"Review for {name} has been successfully submitted!")
     except requests.exceptions.HTTPError as err:
         st.error(f"HTTP error occurred: {err}")
     except Exception as err:

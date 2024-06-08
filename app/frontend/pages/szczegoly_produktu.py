@@ -43,12 +43,15 @@ def display_product_details():
             else:
                 st.error('Something went wrong')
         
-    #TODO opinie
     if st.button("Browse reviews"):
-        st.info("Product reviews")
-        st.write("1. Very good product!")
-        st.write("2. A bit too expensive for its quality.")
-    
+        
+        all_opinions = requests.get('http://api:8000/opinions/',params={'product_id':st.session_state.selected_product_id}).json()
+        if all_opinions:
+            st.info("Product reviews:")
+            for index,opinion in enumerate(all_opinions):
+                st.write(f'{index+1}. {opinion.get("content")}')
+        else:
+            st.info("No reviews yet!")
     if st.button("Back to all products"):
         del st.session_state.selected_product_id
         st.switch_page(Links.ALL_PRODUCTS)
