@@ -44,7 +44,7 @@ For running aplication *Docker* is required.
 ## Important informations
 The Chatbot application is not working locally because it is based on the ChatGPT API. To run this, you need to add the API according to the instructions below:
 1. Create .env file in `app/processes/chatbot`
-2. In .env file create enviromental variable called OPENAI_API_KEY, and assign to it your [openai api key](https://example.com)
+2. In .env file create enviromental variable called OPENAI_API_KEY, and assign to it your [openai api key]([https://example.com](https://openai.com/index/openai-api/)
 
 Example file is provided in this folder.
 
