@@ -46,7 +46,7 @@ The Chatbot application is not working locally because it is based on the ChatGP
 1. Create .env file in `app/processes/chatbot`
 2. In .env file create enviromental variable called OPENAI_API_KEY, and assign to it your [openai api key](https://openai.com/index/openai-api/)
 
-Example file is provided in this folder.
+Example file is provided `.env.example`.
 
 
 
