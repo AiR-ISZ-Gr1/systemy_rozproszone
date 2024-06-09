@@ -1,5 +1,5 @@
 # Systemy Rozproszone (Distributed Systems)
-
+## Implementation of a management, administration, and sales panel for an e-commerce store supported by a chatbot
 ## Table of Contents
   
   - [Installation](#installation)
