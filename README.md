@@ -6,24 +6,24 @@
   - [Usage](#usage)
   - [About](#about)
   - [Features](#features)
-
+  - [Important informations](#Important_informations)
 ## Installation
-Dependencies:
-- Docker
-  
+
+For running aplication *Docker* is required.
+
 1. Clone the repository:
 
     ```bash
     git clone https://github.com/AiR-ISZ-Gr1/systemy_rozproszone.git
     ```
 
-2. Setup infrastructure on W:
+2. Setup infrastructure:
 
     If on UNIX based system run:
     ```bash
     . start_compose.sh
     ```
-    To stop working aplication you should:
+    To shut down the aplication you should:
     ```bash
     . stop_compose.sh
     ```
@@ -33,10 +33,16 @@ Dependencies:
     ```bash
     ./start.bat
     ```
-    To stop working aplication you should:
+    To shut down the aplication you should:
     ```bash
     ./stop_compose.bat
     ```
+    
+## Important informations
+The Chatbot application is not working locally because it is based on the ChatGPT API. To fix this, you need to add the API according to the instructions below:
+1. Create .env file in `app/processes/chatbot`
+2. In .env file create enviromental variable called OPENAI_API_KEY, and assign to it your openai api key.
+Example file is provided in this folder.
 
 5. Wait till container `databases-startup` goes down.
 
@@ -85,9 +91,4 @@ Manages and manipulates data across various databases, supporting requests relat
 The project is based on a microservices architecture, ensuring flexibility and scalability. Each functionality of the store, such as the product catalog, payment system, or user management, is handled by a separate microservice. This allows for easy introduction of new features and scaling of the system as needed. Each microservice operates in an isolated Docker container, ensuring a consistent runtime environment and ease of deployment.
 Technologies
 
-## Important informations!
-The Chatbot application is not working locally because it is based on the ChatGPT API. To fix this, you need to add the API according to the instructions below:
-1. Create .env file in `app/processes/chatbot`
-2. In .env file create enviromental variable called OPENAI_API_KEY, and assign to it your openai api key.
-Example file is provided in this folder.
 
