@@ -8,7 +8,9 @@
   - [Features](#features)
 
 ## Installation
-
+Dependencies:
+- Docker
+  
 1. Clone the repository:
 
     ```bash
@@ -75,6 +77,8 @@ The project is based on a microservices architecture, ensuring flexibility and s
 Technologies
 
 ## Important informations!
-The Chatbot application is not working because it is based on the ChatGPT API. To fix this, you need to add the API according to the instructions below:
+The Chatbot application is not working locally because it is based on the ChatGPT API. To fix this, you need to add the API according to the instructions below:
+1. Create .env file in `app/processes/chatbot`
+2. In .env file create enviromental variable called OPENAI_API_KEY, and assign to it your openai api key.
+Example file is provided in this folder.
 
-#TODO
