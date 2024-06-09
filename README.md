@@ -23,10 +23,19 @@ Dependencies:
     ```bash
     . start_compose.sh
     ```
+    To stop working aplication you should:
+    ```bash
+    . stop_compose.sh
+    ```
+
    
     If on Windows open Docker Desktop as admin and Windows PowerShell as admin and run:
     ```bash
     ./start.bat
+    ```
+    To stop working aplication you should:
+    ```bash
+    ./stop_compose.bat
     ```
 
 5. Wait till container `databases-startup` goes down.
