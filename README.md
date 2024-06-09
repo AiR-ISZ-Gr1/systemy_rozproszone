@@ -4,9 +4,9 @@
   
   - [Installation](#installation)
   - [Usage](#usage)
+  - [Important informations](#Important_informations)
   - [About](#about)
   - [Features](#features)
-  - [Important informations](#Important_informations)
 ## Installation
 
 For running aplication *Docker* is required.
