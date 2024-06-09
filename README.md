@@ -1,7 +1,5 @@
 # Systemy Rozproszone (Distributed Systems)
 
-This project provides ...
-
 ## Table of Contents
   
   - [Installation](#installation)
@@ -75,3 +73,8 @@ Manages and manipulates data across various databases, supporting requests relat
 
 The project is based on a microservices architecture, ensuring flexibility and scalability. Each functionality of the store, such as the product catalog, payment system, or user management, is handled by a separate microservice. This allows for easy introduction of new features and scaling of the system as needed. Each microservice operates in an isolated Docker container, ensuring a consistent runtime environment and ease of deployment.
 Technologies
+
+## Important informations!
+The Chatbot application is not working because it is based on the ChatGPT API. To fix this, you need to add the API according to the instructions below:
+
+#TODO
