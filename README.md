@@ -23,8 +23,6 @@ This project provides ...
     ```bash
     . start_compose.sh
     ```
-    2. If the port `XXXX` for setting up database is busy try:
-    `#TODO`
    
     If on Windows open Docker Desktop as admin and Windows PowerShell as admin and run:
     ```bash
@@ -38,7 +36,7 @@ This project provides ...
 
 ## Usage
 
-1. Open `localhost:8501`
+1. Open `localhost:8501` in your website
 2. Log-in to test client `TestU` or test admin `TestA`, the password for both accounts is: !234qwert
 
 ## About
