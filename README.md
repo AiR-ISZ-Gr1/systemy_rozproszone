@@ -1,4 +1,6 @@
-# Systemy Rozproszone (Distributed Systems)
+# Advanced databases
+### by Bartosz Bartoszewski, Łukasz Faruga, Adam Filapek, Kacper Jarzyna
+
 ## Implementation of a management, administration, and sales panel for an e-commerce store supported by a chatbot
 ## Table of Contents
   
@@ -83,13 +85,88 @@ User Authentication: The authentication process verifies the identity of users a
 Product Search: A tool for effectively finding products based on defined criteria.
 LLM Services: Utilize advanced AI algorithms to interpret, analyze, and generate responses to natural language queries.
 
-- **Database Interfaces (Database I/O)**
+- **Databases**
 
 Manages and manipulates data across various databases, supporting requests related to product descriptions, customer reviews, user data, orders, and inventory statuses.
+
+In project were used 3 types of databases:
+
+- PostgreSQL: Stores information about users, carts, and addresses. It is one of the most popular open-source SQL databases, known for its scalability, performance, and security features, making it ideal for storing sensitive information.
+- MongoDB: Stores information about products and opinions. It is one of the most popular open-source NoSQL databases, known for its dynamic schema, flexibility, scalability, and performance.
+- Qdrant: Stores information about product descriptions. Designed specifically for storing, managing, and searching vector representations of data, such as feature vectors used in artificial intelligence, natural language processing (NLP), recommendation systems, and other machine learning applications. We use the intfloat/e5-small-v2 model for vectorization.
+
+
+![Diagram DB](diagram_db.png)
+
+
+Address
+- id (integer, primary key): Unique identifier for the address.
+- name (varchar): Name associated with the address.
+- street (varchar): Street.
+- city (varchar): City.
+- postal_code (varchar): Postal code.
+
+User
+- id (integer, primary key): Unique identifier for the user.
+- username (varchar): Username.
+- password (varchar): Password for the user account.
+- is_admin (boolean): Indicates if the user has admin privileges.
+- address_id (integer, foreign key): References the address table, indicating the user's address.
+- cart_id (integer, foreign key): References the cart table, indicating the user's current cart.
+
+Order
+- id (integer, primary key): Unique identifier for the order.
+- cart_id (integer, foreign key): References the cart table, linking the order with a specific cart.
+- address_id (integer, foreign key): References the address table, indicating the delivery address for the order.
+- user_id (integer, foreign key): References the user table, indicating who placed the order.
+- date (varchar): Date the order was placed.
+- status (varchar): Current status of the order (e.g., pending, shipped, delivered).
+- total_amount (float): Total amount of the order.
+
+Product
+- id (varchar, primary key): Unique identifier for the product.
+- name (varchar): Product name.
+- sell_price (float): Selling price of the product.
+- quantity (integer): Available quantity of the product in stock.
+- buy_price (float): Purchase price of the product.
+- date (varchar): Date the product was added.
+- image_id (varchar): Image identifier for the product.
+- tags (text): Tags associated with the product, used for categorization.
+- is_enabled (boolean): Indicates if the product is available for sale.
+
+Cart
+- id (integer, primary key): Unique identifier for the cart.
+
+Cart Item
+- id (integer, primary key): Unique identifier for the cart item.
+- cart_id (integer, foreign key): References the cart table, linking the item to a specific cart.
+- product_id (varchar, foreign key): References the product table, indicating which product is in the cart.
+- quantity (integer): Quantity of the product in the cart.
+
+Opinion
+
+- id (varchar, primary key): Unique identifier for the opinion.
+- product_id (varchar, foreign key): References the product table, indicating which product the opinion is about.
+- user_id (integer, foreign key): References the user table, indicating who gave the opinion.
+- content (varchar): Content of the user's opinion.
+
+Vectorized Description
+- id (integer, primary key): Unique identifier for the vector.
+- product_id (varchar, foreign key): References the product table, indicating which product the vector is about.
+- description (varchar): Description of the product.
+- vectorized_description (vector): Result of the vectorization of the description.
+
+Relationships
+- Each user can have multiple addresses, and each address can be associated with multiple users.
+- Each user is linked to one cart, and each cart can contain multiple cart items.
+- Each cart item is associated with one product.
+- Each order is linked to one cart, one address, and one user.
+- Each opinion is associated with one product and one user.
+- Each product is associated with one description.
 
 - **Architecture**
 
 The project is based on a microservices architecture, ensuring flexibility and scalability. Each functionality of the store, such as the product catalog, payment system, or user management, is handled by a separate microservice. This allows for easy introduction of new features and scaling of the system as needed. Each microservice operates in an isolated Docker container, ensuring a consistent runtime environment and ease of deployment.
 Technologies
 
-
+![Used archtecture](architecture.png)
