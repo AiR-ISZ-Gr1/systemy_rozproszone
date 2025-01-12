@@ -1,4 +1,4 @@
-# Systemy Rozproszone (Distributed Systems)
+# Microservices architecture
 ## Implementation of a management, administration, and sales panel for an e-commerce store supported by a chatbot
 ## Table of Contents
   
