@@ -3,3 +3,4 @@ aiohttp
 urllib3==2.2.1
 uvicorn==0.29.0
 openai==1.30.5
+httpx
